@@ -514,8 +514,6 @@ int main(int argc, char** argv)
 
 
 
-	
-
 	waitKey(0);
 
 
@@ -531,6 +529,7 @@ void Trackbar_CallBack(int,void*)
 	imshow("OUT", dst);
 	return;
 }
+
 void Tracebar_CallBack(int, void*)
 {
 	int s = ele_size*2+1;
