@@ -511,6 +511,21 @@ int main(int argc, char** argv)
 
 	#pragma endregion
 
+	#pragma region  HistogramCalculate 直方图计算
+
+	/*
+
+	//看着头疼，没啥暖用
+	//分通道显示
+	vector<Mat> bgrSrc;
+	split(src, bgrSrc);
+
+	//calcHist
+	calcHist(bgrSrc,)
+
+	*/
+
+	#pragma endregion
 
 
 
