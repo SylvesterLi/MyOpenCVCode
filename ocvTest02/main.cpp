@@ -1,7 +1,12 @@
 #include <iostream>
 #include <opencv2/opencv.hpp>
 
+
 using namespace cv;
+using namespace std;
+
+
+
 int ele_size = 3;
 Mat src, dst, gray_src, src1, src2;
 //VideoCapture vc(0);
@@ -12,7 +17,7 @@ int main(int argc, char** argv)
 	
 	
 
-	src = imread("C:/Users/SANG-ASUS/Desktop/pic1.png");
+	src = imread("C:/Users/SANG-ASUS/Desktop/pic.jpg");
 	//src1 = imread("C:/Users/SANG-ASUS/Desktop/11.png");
 	//src2 = imread("C:/Users/SANG-ASUS/Desktop/22.png");
 	if (!src.data)
@@ -401,9 +406,115 @@ int main(int argc, char** argv)
 	#pragma endregion
 	
 	
-	
+	#pragma region Laplacian 拉普拉斯算子
+
+	/*
+	GaussianBlur(src, dst, Size(3, 3), 0, 0);
+	cvtColor(dst, gray_src, CV_BGR2GRAY);
+	threshold(gray_src, gray_src,0, 255, THRESH_OTSU|THRESH_BINARY);
+	Laplacian(gray_src, dst,CV_16S, 3);
+	convertScaleAbs(dst, dst);
+
+
+	imshow("output", dst);
+	*/
+
+
+
+
+
+	#pragma endregion
 	
 
+	#pragma region Canny 边缘检测
+
+	/*
+	Mat edge_mask;
+	int va = 50;
+
+	//cvtColor(src, gray_src,CV_BGR2GRAY);
+
+
+	Canny(src, edge_mask, va *1, va*2, 3, false);
+	dst.create(src.size(), src.type());
+	src.copyTo(dst, edge_mask);
+	imshow("o", dst);
+	*/
+
+	#pragma endregion
+	
+
+
+	#pragma region HoughLinsP 霍夫直线变换
+	/*
+
+	//先进行Canny边缘检测
+	Mat edge_src;
+	vector<Vec4f> plines;
+
+	Canny(src, edge_src, 100, 200);
+	//将边缘进行直线变换
+	HoughLinesP(edge_src, plines, 1, CV_PI / 180.0, 5);
+	//划线
+	for (size_t i = 0; i < plines.size(); i++)
+	{
+		Vec4f hlines = plines[i];
+		line(src, Point(hlines[0], hlines[1]), Point(hlines[2], hlines[3]), Scalar(15,255,59), 10);
+	}
+	imshow("OUT", src);
+	*/
+
+	#pragma endregion
+
+
+	#pragma region HoughCircle 霍夫圆检测
+	
+	//函数说明
+	/* --来自CSDN--
+
+	第四个参数，double类型的dp，用来检测圆心的累加器图像的分辨率于输入图像之比的倒数，且此参数允许创建一个比输入图像分辨率低的累加器。上述文字不好理解的话，来看例子吧。例如，如果dp= 1时，累加器和输入图像具有相同的分辨率。如果dp=2，累加器便有输入图像一半那么大的宽度和高度。
+
+	第五个参数，double类型的minDist，为霍夫变换检测到的圆的圆心之间的最小距离，即让我们的算法能明显区分的两个不同圆之间的最小距离。这个参数如果太小的话，多个相邻的圆可能被错误地检测成了一个重合的圆。反之，这个参数设置太大的话，某些圆就不能被检测出来了。
+
+	第六个参数，double类型的param1，有默认值100。它是第三个参数method设置的检测方法的对应的参数。对当前唯一的方法霍夫梯度法CV_HOUGH_GRADIENT，它表示传递给canny边缘检测算子的高阈值，而低阈值为高阈值的一半。
+
+	第七个参数，double类型的param2，也有默认值100。它是第三个参数method设置的检测方法的对应的参数。对当前唯一的方法霍夫梯度法CV_HOUGH_GRADIENT，它表示在检测阶段圆心的累加器阈值。它越小的话，就可以检测到更多根本不存在的圆，而它越大的话，能通过检测的圆就更加接近完美的圆形了。
+
+	第八个参数，int类型的minRadius,有默认值0，表示圆半径的最小值。
+
+	第九个参数，int类型的maxRadius,也有默认值0，表示圆半径的最大值。需要注意的是，使用此函数可以很容易地检测出圆的圆心，但是它可能找不到合适的圆半径
+	*/
+	
+	/*
+
+	//先进行滤波 这儿选用中值滤波
+	medianBlur(src, dst, 3);
+	cvtColor(dst,gray_src, CV_BGR2GRAY);
+	//霍夫圆检测
+	vector<Vec3f> pCircle;
+	//              1         2            3          4  5   6    7 8  9
+	HoughCircles(gray_src, pCircle, CV_HOUGH_GRADIENT,1, 5, 100, 65,80,100);
+	
+
+	
+	cvtColor(gray_src, gray_src, CV_GRAY2BGR);
+	for (size_t i = 0; i < pCircle.size(); i++)
+	{
+		Vec3f hlines = pCircle[i];
+		circle(gray_src, Point(hlines[0], hlines[1]), hlines[2], Scalar(15, 255, 59), 2, LINE_AA);
+
+	}
+
+	imshow("OUT", gray_src);
+
+	*/
+
+	#pragma endregion
+
+
+
+
+	
 
 	waitKey(0);
 
