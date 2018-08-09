@@ -1,6 +1,6 @@
 #include <iostream>
 #include <opencv2/opencv.hpp>
-
+#include<math.h>
 
 using namespace cv;
 using namespace std;
@@ -8,16 +8,20 @@ using namespace std;
 
 
 int ele_size = 3;
+int canny_threshold = 100;
 Mat src, dst, gray_src, src1, src2;
+Mat baseT;
 //VideoCapture vc(0);
 void Trackbar_CallBack(int, void*);
+void AdjustThreshold(int, void*);
 int main(int argc, char** argv)
 {
 	//声明图像变量
 	
 	
 
-	src = imread("C:/Users/SANG-ASUS/Desktop/pic.jpg");
+	src = imread("C:/Users/SANG-ASUS/Desktop/base.jpg");
+	//baseT = imread("C:/Users/SANG-ASUS/Desktop/baseT.png");
 	//src1 = imread("C:/Users/SANG-ASUS/Desktop/11.png");
 	//src2 = imread("C:/Users/SANG-ASUS/Desktop/22.png");
 	if (!src.data)
@@ -27,6 +31,9 @@ int main(int argc, char** argv)
 	//显示原图
 	namedWindow("Holo Image", CV_WINDOW_AUTOSIZE);
 	imshow("Holo Image", src);
+
+
+
 	#pragma region Mask Demo 02 掩模操作1 
 
 		/*
@@ -361,7 +368,6 @@ int main(int argc, char** argv)
 	Trackbar_CallBack(0, 0);
 	*/
 
-	
 	#pragma region Sobel算子
 	
 	//顶部声明了src dst gray_src src1 src2
@@ -405,7 +411,6 @@ int main(int argc, char** argv)
 	
 	#pragma endregion
 	
-	
 	#pragma region Laplacian 拉普拉斯算子
 
 	/*
@@ -425,7 +430,6 @@ int main(int argc, char** argv)
 
 	#pragma endregion
 	
-
 	#pragma region Canny 边缘检测
 
 	/*
@@ -443,8 +447,6 @@ int main(int argc, char** argv)
 
 	#pragma endregion
 	
-
-
 	#pragma region HoughLinsP 霍夫直线变换
 	/*
 
@@ -465,7 +467,6 @@ int main(int argc, char** argv)
 	*/
 
 	#pragma endregion
-
 
 	#pragma region HoughCircle 霍夫圆检测
 	
@@ -526,6 +527,43 @@ int main(int argc, char** argv)
 	*/
 
 	#pragma endregion
+	
+	#pragma region TemplateMatch 模板匹配
+	
+	//把下面的代码封装成MatchingMethod就可以了
+	// createTrackbar( trackbar_label, image_window, &match_method, max_Trackbar, MatchingMethod );
+	//MatchingMethod(0, 0);
+
+	/*
+	double minVal, maxVal;
+	//模板匹配对于SQDIFF和SQDIFF_NORMED，越小的数值有着更高的匹配效果，其他的方法数值越大的匹配效果越好
+	matchTemplate(src, baseT, dst, CV_TM_SQDIFF_NORMED);
+	normalize(dst, dst, 0, 1, NORM_MINMAX);
+
+	Point minLoc, maxLoc, matchLoc;
+	//minMaxLoc在图像上找到最大值和最小值，并且存放在minLoc和maxLoc中
+	minMaxLoc(dst, &minVal, &maxVal, &minLoc, &maxLoc, Mat());
+	rectangle(src, minLoc, Point(minLoc.x + baseT.cols, minLoc.y + baseT.rows), Scalar(0, 255, 0));
+	cout << "匹配度：" << minVal << endl;
+	imshow("wht", src);
+	*/
+
+
+	#pragma endregion
+
+	#pragma region FindContours 轮廓发现
+	/*
+	cvtColor(src, gray_src, CV_BGR2GRAY);
+	namedWindow("out", WINDOW_AUTOSIZE);
+	//此时已有灰度图像，canny_threshold默认为3
+	createTrackbar("track", "out", &canny_threshold, 500, AdjustThreshold);
+	//需要注意下要在前面声明
+	AdjustThreshold(0, 0);
+	imshow("out", dst);
+	*/
+	#pragma endregion
+
+
 
 
 
@@ -552,5 +590,44 @@ void Tracebar_CallBack(int, void*)
 	dilate(gray_src, src, element, Point(-1, -1), 1);
 	imshow("Output_Img", dst);
 	return;
+}
+
+//轮廓发现Callback
+void AdjustThreshold(int, void*)
+{
+	//canny_threshold
+	Mat canout;
+	Canny(gray_src, canout, canny_threshold, canny_threshold * 2);
+	//vector知识点见 https://blog.csdn.net/u010368556/article/details/79179669
+	//hierachy 等级制度
+	//用于保存找到的图像等级
+	vector<Vec4i> hierachy;
+	//用于保存找到的轮廓
+	vector<vector<Point>> contours;
+	
+	//知识点见 https://blog.csdn.net/keith_bb/article/details/70185209
+	//轮廓检索模式
+	/*
+	RETR_EXTERNAL:表示只检测最外层轮廓，对所有轮廓设置hierarchy[i][2]=hierarchy[i][3]=-1 
+	RETR_LIST:提取所有轮廓，并放置在list中，检测的轮廓不建立等级关系 
+	RETR_CCOMP:提取所有轮廓，并将轮廓组织成双层结构(two-level hierarchy),顶层为连通域的外围边界，次层位内层边界 
+	RETR_TREE:提取所有轮廓并重新建立网状轮廓结构 
+	RETR_FLOODFILL：官网没有介绍，应该是洪水填充法 
+	*/	
+	//轮廓近似方法
+	/*
+	CHAIN_APPROX_NONE：获取每个轮廓的每个像素，相邻的两个点的像素位置差不超过1 
+	CHAIN_APPROX_SIMPLE：压缩水平方向，垂直方向，对角线方向的元素，值保留该方向的重点坐标，如果一个矩形轮廓只需4个点来保存轮廓信息 
+	CHAIN_APPROX_TC89_L1和CHAIN_APPROX_TC89_KCOS使用Teh-Chinl链逼近算法中的一种
+	*/
+	findContours(canout, contours, hierachy, RETR_TREE, CHAIN_APPROX_SIMPLE);
+	//给一个随机数种子 随机数用做随机颜色  随机颜色用于填补不同区域
+	RNG rng(12345);
+	for (size_t i = 0; i < contours.size(); i++)
+	{
+		Scalar color = Scalar(rng.uniform(0, 255), rng.uniform(0, 255), rng.uniform(0, 255));
+		drawContours(dst, contours, i, color, 2, LINE_AA, hierachy);
+	}
+	imshow("out", dst);
 }
 
