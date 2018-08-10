@@ -17,6 +17,7 @@ Mat baseT;
 void Trackbar_CallBack(int, void*);
 void AdjustThreshold(int, void*);
 void binary_callback(int, void*);
+void Contours_DrawPoly(int, void*);
 
 int main(int argc, char** argv)
 {
@@ -580,6 +581,16 @@ int main(int argc, char** argv)
 
 	#pragma endregion
 
+	#pragma region DrawPoly轮廓多边形绘制
+
+	namedWindow("out", WINDOW_AUTOSIZE);
+	cvtColor(src, gray_src, CV_BGR2GRAY);
+	blur(gray_src, gray_src, Size(3, 3));
+	createTrackbar("binary", "out", &binary_threshold, 255, Contours_DrawPoly);
+	Contours_DrawPoly(0, 0);
+	imshow("out", src);
+
+	#pragma endregion
 
 
 
@@ -679,5 +690,92 @@ void binary_callback(int, void*)
 
 
 
+
+}
+
+//绘制轮廓多边形
+void Contours_DrawPoly(int, void*)
+{
+	Mat canout;
+	//用于保存找到的图像等级
+	vector<Vec4i> hierachy;
+	//用于保存找到的轮廓
+	vector<vector<Point>> contours;
+	
+	threshold(gray_src, canout, binary_threshold, 255, THRESH_BINARY);
+	//发现轮廓
+	findContours(canout, contours, hierachy, RETR_TREE, CHAIN_APPROX_SIMPLE);
+	
+	
+
+
+	//存放矩形
+	vector<Rect> rectangles(contours.size());
+	//存放
+	vector<Point2f> centers(contours.size());
+	vector<float> radiux(contours.size());
+
+	//减小点数
+	vector<vector<Point>> contours_covs(contours.size());
+	for (size_t i = 0; i < contours.size(); i++)
+	{
+		approxPolyDP(contours[i], contours_covs[i], 3, true);
+		//把一列点整理成了一个矩形（而不是转成了一个点）
+		rectangles[i] = boundingRect(contours_covs[i]);
+		//把contours里的点整理成圆，输出圆的中心与半径
+		minEnclosingCircle(contours_covs[i], centers[i], radiux[i]);
+
+	}
+	//绘制
+	RNG rng(12345);
+	for (size_t j = 0; j < contours_covs.size(); j++)
+	{
+		Scalar color = Scalar(rng.uniform(0, 255), rng.uniform(0, 255), rng.uniform(0, 255));
+		rectangle(src, rectangles[j], color);
+		circle(src, centers[j], radiux[j], color);
+
+	}
+
+	
+
+	/*
+	vector<vector<Point>> contours_ploy(contours.size());
+	vector<Rect> ploy_rects(contours.size());
+	vector<Point2f> ccs(contours.size());
+	vector<float> radius(contours.size());
+
+	vector<RotatedRect> minRects(contours.size());
+	vector<RotatedRect> myellipse(contours.size());
+
+	for (size_t i = 0; i < contours.size(); i++) {
+		approxPolyDP(Mat(contours[i]), contours_ploy[i], 3, true);
+		ploy_rects[i] = boundingRect(contours_ploy[i]);
+		minEnclosingCircle(contours_ploy[i], ccs[i], radius[i]);
+		if (contours_ploy[i].size() > 5) {
+			myellipse[i] = fitEllipse(contours_ploy[i]);
+			minRects[i] = minAreaRect(contours_ploy[i]);
+		}
+	}
+
+	// draw it
+	//drawImg = Mat::zeros(src.size(), src.type());
+	RNG rng(12345);
+	Point2f pts[4];
+	for (size_t t = 0; t < contours.size(); t++) {
+		Scalar color = Scalar(rng.uniform(0, 255), rng.uniform(0, 255), rng.uniform(0, 255));
+		rectangle(src, ploy_rects[t], color, 2, 8);
+		circle(src, ccs[t], radius[t], color, 2, 8);
+		if (contours_ploy[t].size() > 5) {
+			ellipse(src, myellipse[t], color, 1, 8);
+			minRects[t].points(pts);
+			for (int r = 0; r < 4; r++) {
+				line(src, pts[r], pts[(r + 1) % 4], color, 1, 8);
+			}
+		}
+	}
+	*/
+
+	
+	imshow("out", src);
 
 }
