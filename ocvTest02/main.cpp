@@ -9,11 +9,15 @@ using namespace std;
 
 int ele_size = 3;
 int canny_threshold = 100;
+int binary_threshold = 128;
+
 Mat src, dst, gray_src, src1, src2;
 Mat baseT;
 //VideoCapture vc(0);
 void Trackbar_CallBack(int, void*);
 void AdjustThreshold(int, void*);
+void binary_callback(int, void*);
+
 int main(int argc, char** argv)
 {
 	//声明图像变量
@@ -563,6 +567,19 @@ int main(int argc, char** argv)
 	*/
 	#pragma endregion
 
+	#pragma region ConvexHull 凸包
+
+	/*
+	namedWindow("out", WINDOW_AUTOSIZE);
+	cvtColor(src, gray_src, CV_BGR2GRAY);
+	blur(gray_src, gray_src, Size(3, 3));
+	createTrackbar("binary","out", &binary_threshold, 255, binary_callback);
+	binary_callback(0, 0);
+	imshow("out", dst);
+	*/
+
+	#pragma endregion
+
 
 
 
@@ -631,3 +648,36 @@ void AdjustThreshold(int, void*)
 	imshow("out", dst);
 }
 
+//凸包发现
+void binary_callback(int, void*)
+{
+	Mat canout;
+
+
+	//用于保存找到的图像等级
+	vector<Vec4i> hierachy;
+	//用于保存找到的轮廓
+	vector<vector<Point>> contours;
+	threshold(gray_src, canout, binary_threshold, 255, THRESH_BINARY);
+	//发现轮廓
+	findContours(canout, contours, hierachy, RETR_TREE, CHAIN_APPROX_SIMPLE);
+	vector<vector<Point>> hulls(contours.size());
+	for (size_t i = 0; i < contours.size(); i++)
+	{
+		convexHull(contours[i], hulls[i]);
+	}
+	dst = Mat::zeros(src.size(), CV_8UC3);
+
+	RNG rng(12345);
+	for (size_t i = 0; i < contours.size(); i++)
+	{
+		Scalar color = Scalar(rng.uniform(0, 255), rng.uniform(0, 255), rng.uniform(0, 255));
+		//drawContours(dst, contours, i, color, 2, LINE_AA, hierachy);
+		drawContours(dst, hulls, i, color, 2, LINE_AA, hierachy);
+	}
+	imshow("out", dst);
+
+
+
+
+}
