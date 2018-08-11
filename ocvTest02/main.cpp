@@ -11,7 +11,7 @@ int ele_size = 3;
 int canny_threshold = 100;
 int binary_threshold = 128;
 
-Mat src, dst, gray_src, src1, src2;
+Mat src, dst, gray_src, laplance_src, sharpImg;
 Mat baseT;
 //VideoCapture vc(0);
 void Trackbar_CallBack(int, void*);
@@ -25,7 +25,8 @@ int main(int argc, char** argv)
 	
 	
 
-	src = imread("C:/Users/SANG-ASUS/Desktop/base.jpg");
+	src = imread("C:/Users/SANG-ASUS/Desktop/cards.png");
+	
 	//baseT = imread("C:/Users/SANG-ASUS/Desktop/baseT.png");
 	//src1 = imread("C:/Users/SANG-ASUS/Desktop/11.png");
 	//src2 = imread("C:/Users/SANG-ASUS/Desktop/22.png");
@@ -34,8 +35,8 @@ int main(int argc, char** argv)
 		printf("no image");
 	}
 	//显示原图
-	namedWindow("Holo Image", CV_WINDOW_AUTOSIZE);
-	imshow("Holo Image", src);
+	namedWindow("src image", CV_WINDOW_AUTOSIZE);
+	imshow("src image", src);
 
 
 
@@ -157,7 +158,7 @@ int main(int argc, char** argv)
 	imshow("dst", dst);
 	*/
 
-#pragma endregion
+	#pragma endregion
 
 	#pragma region Remix Image Demo 06 混合图像
 	/*
@@ -429,10 +430,6 @@ int main(int argc, char** argv)
 	imshow("output", dst);
 	*/
 
-
-
-
-
 	#pragma endregion
 	
 	#pragma region Canny 边缘检测
@@ -583,16 +580,135 @@ int main(int argc, char** argv)
 
 	#pragma region DrawPoly轮廓多边形绘制
 
+	/*
 	namedWindow("out", WINDOW_AUTOSIZE);
 	cvtColor(src, gray_src, CV_BGR2GRAY);
 	blur(gray_src, gray_src, Size(3, 3));
 	createTrackbar("binary", "out", &binary_threshold, 255, Contours_DrawPoly);
 	Contours_DrawPoly(0, 0);
 	imshow("out", src);
-
+	*/
 	#pragma endregion
 
+	#pragma region 图像分割
 
+		namedWindow("dst", WINDOW_AUTOSIZE);
+
+		#pragma region 变成黑色背景
+
+		for (size_t i = 0; i < src.rows; i++)
+		{
+			for (size_t j = 0; j < src.cols; j++)
+			{
+				if (src.at<Vec3b>(i, j) == Vec3b(255, 255, 255))
+				{
+					src.at<Vec3b>(i, j) = Vec3b(0, 0, 0);
+				}
+			}
+		}
+		//此时已是黑色背景
+		//imshow("black image", src);
+		#pragma endregion	
+
+		#pragma region 锐化
+
+		//先整一个拉普拉斯算子
+		Mat kernel = (Mat_<float>(3, 3) << 1, 1, 1, 1, -8, 1, 1, 1, 1);
+		filter2D(src, laplance_src, CV_32F, kernel);
+		//imshow("lap", laplance_src);
+
+
+		//32F的图像存入sharpImg
+		src.convertTo(sharpImg, CV_32F);
+
+		//这里要用上面黑色背景的图像（black src）不然出来结果不对
+		sharpImg = sharpImg - laplance_src;
+		sharpImg.convertTo(sharpImg, CV_8UC3);
+		//imshow("AfterSharp", sharpImg);
+
+		#pragma endregion
+
+		#pragma region 二值化 距离变化 归一化
+
+		//现在得到的sharpImg是8UC3格式 src仍然是black src dst暂时还没用上 Laplance_src后面可能用不上了
+		//准备进行第三步 二值化
+		//先转为灰色图像
+		cvtColor(sharpImg, sharpImg, CV_BGR2GRAY);
+		//进行二值化（其实40效果并不好，我觉得140可以）（他这加了个THRESH_OTSU，结果也不一样，后来要注意一下）
+		threshold(sharpImg, gray_src, 40, 255, THRESH_BINARY|THRESH_OTSU);
+		//进行距离变换
+		distanceTransform(gray_src, dst, DIST_L2, 3);
+		//变换完了还看不出结果，但是归一化之后就有效果了
+		normalize(dst, dst, 0, 1, NORM_MINMAX);
+		//二值化得到大概标记（确实是很抽象的标记了）
+		threshold(dst, dst, 0.4, 1, THRESH_BINARY);
+		//腐蚀
+		Mat kernel1 = Mat::ones(3, 3, CV_8UC1);
+		erode(dst, dst, kernel1);
+
+
+		
+		dst.convertTo(dst,CV_8U);
+		Mat marks = Mat::zeros(dst.size(), CV_32SC1);
+		//发现轮廓
+
+		//用于保存找到的轮廓
+		vector<vector<Point>> contours;
+		findContours(dst, contours, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
+		//给一个随机数种子 随机数用做随机颜色  随机颜色用于填补不同区域
+		
+		for (size_t i = 0; i < contours.size(); i++)
+		{
+			Scalar color = Scalar::all(static_cast<int>(i)+1);
+			drawContours(marks, contours, i, color, -1);//-1为填充内部
+		}
+		circle(marks, Point(5, 5), 3, Scalar(255, 255, 255), -1);
+		//展示轮廓
+		//imshow("dst",src);
+
+		watershed(src, marks);
+		//开始分水岭变换
+		Mat msk = Mat::zeros(marks.size(), CV_8UC1);
+		marks.convertTo(msk, CV_8UC1);
+		bitwise_not(msk, msk,Mat());
+		imshow("mak", msk);
+
+		
+		//开始上色
+		vector<Vec3b> colors;
+		//准备一个随机颜色
+		for (size_t i = 0; i < contours.size(); i++)
+		{
+			int r = theRNG().uniform(0, 255);
+			int g = theRNG().uniform(0, 255);
+			int b = theRNG().uniform(0, 255);
+			colors.push_back(Vec3b((uchar)b, (uchar)g, (uchar)r));
+
+		}
+		
+		dst = Mat::zeros(marks.size(), CV_8UC3);
+		
+		for (int i = 0; i < marks.rows; i++)
+		{
+			for (int j = 0; j < marks.cols; j++)
+			{
+				int index = marks.at<int>(i, j);
+
+				if (index>0 && index<=static_cast<int>(contours.size()))
+				{
+					dst.at<Vec3b>(i, j) = colors[index - 1];
+				}
+				else
+				{
+					dst.at<Vec3b>(i, j) = Vec3b(0, 0, 0);
+				}
+			}
+		}
+		
+		imshow("dst", dst);
+		#pragma endregion
+
+	#pragma endregion
 
 
 	waitKey(0);
