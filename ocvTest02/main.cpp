@@ -25,8 +25,8 @@ int main(int argc, char** argv)
 	
 	
 
-	src = imread("C:/Users/SANG-ASUS/Desktop/cards.png");
-	
+	//src = imread("C:/Users/SANG-ASUS/Desktop/cards.png");
+	src = imread("cards.png");
 	//baseT = imread("C:/Users/SANG-ASUS/Desktop/baseT.png");
 	//src1 = imread("C:/Users/SANG-ASUS/Desktop/11.png");
 	//src2 = imread("C:/Users/SANG-ASUS/Desktop/22.png");
