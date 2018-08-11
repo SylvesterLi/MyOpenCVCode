@@ -664,17 +664,21 @@ int main(int argc, char** argv)
 		}
 		circle(marks, Point(5, 5), 3, Scalar(255, 255, 255), -1);
 		//展示轮廓
-		//imshow("dst",src);
+		imshow("mkr",marks* 1000);
 
-		watershed(src, marks);
+		
 		//开始分水岭变换
+		watershed(src, marks);
+		//不*1000就是全黑 *了以后背景就是白色的，cards就显示出来了
+		imshow("water", marks * 1000);
+		//下面几行代码没啥用，就是给你看看分水岭的效果
 		Mat msk = Mat::zeros(marks.size(), CV_8UC1);
 		marks.convertTo(msk, CV_8UC1);
 		bitwise_not(msk, msk,Mat());
 		imshow("mak", msk);
 
 		
-		//开始上色
+		//开始上色 用的是分水岭后的marks
 		vector<Vec3b> colors;
 		//准备一个随机颜色
 		for (size_t i = 0; i < contours.size(); i++)
