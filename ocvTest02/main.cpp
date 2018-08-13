@@ -1,6 +1,6 @@
 #include <iostream>
 #include <opencv2/opencv.hpp>
-#include<math.h>
+#include <math.h>
 
 using namespace cv;
 using namespace std;
@@ -592,10 +592,10 @@ int main(int argc, char** argv)
 
 	#pragma region 图像分割
 
-		namedWindow("dst", WINDOW_AUTOSIZE);
+		//namedWindow("dst", WINDOW_AUTOSIZE);
 
 		#pragma region 变成黑色背景
-
+		/*
 		for (size_t i = 0; i < src.rows; i++)
 		{
 			for (size_t j = 0; j < src.cols; j++)
@@ -626,10 +626,11 @@ int main(int argc, char** argv)
 		sharpImg.convertTo(sharpImg, CV_8UC3);
 		//imshow("AfterSharp", sharpImg);
 
+		*/
 		#pragma endregion
 
 		#pragma region 二值化 距离变化 归一化
-
+		/*
 		//现在得到的sharpImg是8UC3格式 src仍然是black src dst暂时还没用上 Laplance_src后面可能用不上了
 		//准备进行第三步 二值化
 		//先转为灰色图像
@@ -708,6 +709,7 @@ int main(int argc, char** argv)
 				}
 			}
 		}
+		*/
 		
 		imshow("dst", dst);
 		#pragma endregion
