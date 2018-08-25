@@ -29,3 +29,25 @@ if auto-download can't do to help, you could check these issues :
 ` https://github.com/opencv/opencv_contrib/issues `
 
 At last ,google can be your best driver.
+
+## Update 2
+
+ Finally, got it! After check and check again, it works! 
+
+Below is the code of printing all files' name in current catalog
+Just paste it in the PowerShell
+Attention : the ` F:\OCV\opencv\newbuild\install\x64\vc15\lib ` is my file directory path
+
+ ``` PowerShell
+ 
+Get-ChildItem F:\OCV\opencv\newbuild\install\x64\vc15\lib | ForEach-Object -Process{
+if($_ -is [System.IO.FileInfo])
+{
+Write-Host($_.name);
+}
+}
+
+ ```
+
+
+ ##
