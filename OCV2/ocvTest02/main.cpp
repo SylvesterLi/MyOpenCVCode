@@ -1,12 +1,11 @@
 #include <iostream>
 #include <opencv2/opencv.hpp>
 #include <math.h>
-#include "opencv2/features2d.hpp"
-#include "opencv2/highgui.hpp"
+
 
 using namespace cv;
 using namespace std;
-using namespace cv::xfeatures2d;
+
 
 
 
