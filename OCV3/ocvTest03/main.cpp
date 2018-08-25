@@ -8,6 +8,7 @@
 using namespace cv;
 using namespace cv::xfeatures2d;
 using namespace std;
+
 int main(int argc, char** argv) {
 	Mat img_1 = imread("C:/Users/SANG-ASUS/Desktop/pic1.png", IMREAD_GRAYSCALE);
 	if (img_1.empty()) {
