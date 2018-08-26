@@ -9,6 +9,8 @@ using namespace cv;
 using namespace cv::xfeatures2d;
 using namespace std;
 
+Mat src, dst;
+
 int main(int argc, char** argv) {
 	Mat img_1 = imread("C:/Users/SANG-ASUS/Desktop/pic1.png", IMREAD_GRAYSCALE);
 	if (img_1.empty()) {
@@ -26,6 +28,13 @@ int main(int argc, char** argv) {
 	drawKeypoints(img_1, keypoints, img_keypoints1, Scalar::all(-1), DrawMatchesFlags::DEFAULT);
 	namedWindow("key points", CV_WINDOW_AUTOSIZE);
 	imshow("key points", img_keypoints1);
+	
+	//Harris角点检测 参考
+	//https://blog.csdn.net/woxincd/article/details/60754658 
+
+	//明天再写吧
+	//cvCornerHarris(src, dst, 3);
+
 
 	waitKey(0);
 	return 0;
