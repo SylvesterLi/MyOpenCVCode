@@ -26,9 +26,11 @@ void HarrisTrack(int, void *);
 
 
 int main(int argc, char** argv) {
-	img_1 = imread("C:/Users/SANG-ASUS/Desktop/ppp.png");
+	//img_1 = imread("C:/Users/SANG-ASUS/Desktop/pic1.png");
+	img_1 = imread("ppp.png");
 	if (img_1.empty()) {
 		printf("could not load image...\n");
+		waitKey(0);
 		return -1;
 	}
 	imshow("input image", img_1);
