@@ -17,12 +17,13 @@ Mat src, dst, img_1,graySrc,normDst;
 //变量声明
 int harrisThresh = 127;
 int threshMax = 255;
-
+//最大角点数
+int maxCorner = 5;
 
 
 //方法声明
 void HarrisTrack(int, void *);
-
+void ShiTomasiTrack(int, void *);
 
 
 int main(int argc, char** argv) {
@@ -35,21 +36,28 @@ int main(int argc, char** argv) {
 	}
 	imshow("input image", img_1);
 
-	
-	//Harris角点检测 参考
-	//https://blog.csdn.net/woxincd/article/details/60754658 
-
-	//明天再写吧
-	//cvCornerHarris(src, dst, 3);
-
 	cvtColor(img_1, graySrc, CV_BGR2GRAY);
 	imshow("gray", graySrc);
 
-	//cornerHarris(src, dst, 3, 3, 1.0);
-	
-	namedWindow("harris", WINDOW_AUTOSIZE);
-	createTrackbar("harrisTitle", "harris", &harrisThresh, threshMax, HarrisTrack);
-	HarrisTrack(0,0);
+	#pragma region Harris 角点检测
+
+	//Harris角点检测 参考
+	//https://blog.csdn.net/woxincd/article/details/60754658 
+
+	//namedWindow("harris", WINDOW_AUTOSIZE);
+	//createTrackbar("harrisTitle", "harris", &harrisThresh, threshMax, HarrisTrack);
+	//HarrisTrack(0,0);  
+
+	#pragma endregion
+
+	#pragma region ShiTomasi 角点检测 
+
+	namedWindow("Good", WINDOW_AUTOSIZE);
+	//ShiTomasi角点检测  
+	createTrackbar("trackBarName", "Good", &maxCorner, 255, ShiTomasiTrack);
+	ShiTomasiTrack(0, 0);
+
+	#pragma endregion
 
 
 	waitKey(0);
@@ -85,5 +93,28 @@ void HarrisTrack(int, void *)
 	}
 	//展示resultImg处理结果
 	imshow("harris", resultImg);
+
+}
+
+void ShiTomasiTrack(int, void *)
+{
+	if (maxCorner < 1) { maxCorner = 1; }
+	//最小可接受向量值  不知道是啥
+	double qualityLv = 0.01;
+	//两个角点最小间隔 防止同一角点被多次标记
+	double minValue = 10;
+	//保存Corners的数组 dst用于draw
+	vector<Point2f> corners;
+
+	dst = img_1.clone();
+	goodFeaturesToTrack(graySrc, corners, maxCorner, qualityLv, minValue);//后面保持默认
+
+	//Draw Corners
+	for (int i = 0;  i < corners.size(); i++)
+	{
+		circle(dst, corners[i], 2, Scalar(0, 255, 0));
+	}
+	imshow("Good", dst);
+
 
 }
