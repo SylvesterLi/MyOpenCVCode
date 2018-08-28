@@ -106,6 +106,7 @@ void ShiTomasiTrack(int, void *)
 	//保存Corners的数组 dst用于draw
 	vector<Point2f> corners;
 
+	//需要注意，这里并未使用Src，用的是img_1
 	dst = img_1.clone();
 	goodFeaturesToTrack(graySrc, corners, maxCorner, qualityLv, minValue);//后面保持默认
 
