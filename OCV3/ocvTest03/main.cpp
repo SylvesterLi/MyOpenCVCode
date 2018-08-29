@@ -52,12 +52,25 @@ int main(int argc, char** argv) {
 
 	#pragma region ShiTomasi 角点检测 
 
+	/*
 	namedWindow("Good", WINDOW_AUTOSIZE);
 	//ShiTomasi角点检测  
 	createTrackbar("trackBarName", "Good", &maxCorner, 255, ShiTomasiTrack);
 	ShiTomasiTrack(0, 0);
+	*/
 
 	#pragma endregion
+
+	#pragma region 自定义角点检测
+
+	//参考文章：
+	//https://blog.csdn.net/weixin_41695564/article/details/79979784  
+
+
+
+
+	#pragma endregion
+
 
 
 	waitKey(0);
