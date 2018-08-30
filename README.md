@@ -54,3 +54,21 @@ Write-Host($_.name);
  
  In the OCV3 Project I don't use src as default input image but use img_1.Which leads me misleading and make some mistakes. In the last days, I should take care of this!!
  
+
+ ## Update 4
+
+ These two days, i just watch corner detection, one of detection methods is Harris , and another is Shi-Tomasi Corner detetion. In my point of view , Good Features To Track (aka Shi-Tomasi) performs better than Harris detection .
+
+But both of them did not mark the top of roof which human could easily recognize.
+
+Pic blow is ` good feature to track ` 
+
+![](picsSource/goodF2Track.png)
+
+
+and till now, I should have finished custom corner detection, but I think it is unnecessary to learn. When I meet such kind of projects or problems, I would come back have a careful seek.
+
+
+## Update 5
+
+Comming soon....
