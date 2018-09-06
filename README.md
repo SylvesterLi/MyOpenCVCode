@@ -73,4 +73,6 @@ and till now, I should have finished custom corner detection, but I think it is 
 
 Comming soon....
 
-I don't know where to go...
+These days I am too lazy to update, but from now on. I will keep code updating!!!
+
+
