@@ -14,6 +14,7 @@ int canny_threshold = 100;
 int binary_threshold = 128;
 
 Mat src, dst, gray_src, laplance_src, sharpImg;
+Mat src1, src2;
 Mat baseT;
 //VideoCapture vc(0);
 void Trackbar_CallBack(int, void*);
@@ -28,10 +29,11 @@ int main(int argc, char** argv)
 	
 
 	//src = imread("C:/Users/SANG-ASUS/Desktop/cards.png");
-	src = imread("C:/Users/SANG-ASUS/Desktop/pic1.png");//"cards.png"   
+	src = imread("C:/Users/SANG-ASUS/Desktop/pic1.png");
+	//"cards.png"   
 	//baseT = imread("C:/Users/SANG-ASUS/Desktop/baseT.png");
-	//src1 = imread("C:/Users/SANG-ASUS/Desktop/11.png");
-	//src2 = imread("C:/Users/SANG-ASUS/Desktop/22.png");
+	src1 = imread("C:/Users/SANG-ASUS/Desktop/11.jpg");
+	src2 = imread("C:/Users/SANG-ASUS/Desktop/22.jpg");
 	if (!src.data)
 	{
 		printf("no image");
@@ -96,13 +98,13 @@ int main(int argc, char** argv)
 
 	#pragma region Scalar Demo 03 给图片填色
 
-		/*
+		
 		dst = Mat(src.size(), src.type());
 		dst = Scalar(0, 25, 255);
 		dst = src.clone();
 		namedWindow("dst Image", CV_WINDOW_AUTOSIZE);
 		imshow("dst Image",dst);
-		*/
+		
 
 	#pragma endregion	
 
@@ -163,6 +165,7 @@ int main(int argc, char** argv)
 	#pragma endregion
 
 	#pragma region Remix Image Demo 06 混合图像
+	
 	/*
 	addWeighted(src1, 0.4, src2, 0.6, 0.0, dst, -1);
 	imshow("11", dst);
@@ -271,9 +274,7 @@ int main(int argc, char** argv)
 
 	#pragma endregion
 
-	#pragma region 模糊与高斯模糊
-	
-	
+	#pragma region 模糊与高斯模糊		
 	
 	/*
 	blur(src, dst, Size(1, 155), Point(-1, -1));	
@@ -452,23 +453,23 @@ int main(int argc, char** argv)
 	#pragma endregion
 	
 	#pragma region HoughLinsP 霍夫直线变换
-	/*
+	
 
 	//先进行Canny边缘检测
-	Mat edge_src;
-	vector<Vec4f> plines;
+	//Mat edge_src;
+	//vector<Vec4f> plines;
 
-	Canny(src, edge_src, 100, 200);
-	//将边缘进行直线变换
-	HoughLinesP(edge_src, plines, 1, CV_PI / 180.0, 5);
-	//划线
-	for (size_t i = 0; i < plines.size(); i++)
-	{
-		Vec4f hlines = plines[i];
-		line(src, Point(hlines[0], hlines[1]), Point(hlines[2], hlines[3]), Scalar(15,255,59), 10);
-	}
-	imshow("OUT", src);
-	*/
+	//Canny(src, edge_src, 100, 200);
+	////将边缘进行直线变换
+	//HoughLinesP(edge_src, plines, 1, CV_PI / 180.0, 5);
+	////划线
+	//for (size_t i = 0; i < plines.size(); i++)
+	//{
+	//	Vec4f hlines = plines[i];
+	//	line(src, Point(hlines[0], hlines[1]), Point(hlines[2], hlines[3]), Scalar(15,255,59), 10);
+	//}
+	//imshow("OUT", src);
+	
 
 	#pragma endregion
 
@@ -594,7 +595,7 @@ int main(int argc, char** argv)
 
 	#pragma region 图像分割
 
-		//namedWindow("dst", WINDOW_AUTOSIZE);
+		namedWindow("dst", WINDOW_AUTOSIZE);
 
 		#pragma region 变成黑色背景
 		/*
@@ -608,44 +609,44 @@ int main(int argc, char** argv)
 				}
 			}
 		}
-		//此时已是黑色背景
-		//imshow("black image", src);
+		此时已是黑色背景
+		imshow("black image", src);
 		#pragma endregion	
 
 		#pragma region 锐化
 
-		//先整一个拉普拉斯算子
+		先整一个拉普拉斯算子
 		Mat kernel = (Mat_<float>(3, 3) << 1, 1, 1, 1, -8, 1, 1, 1, 1);
 		filter2D(src, laplance_src, CV_32F, kernel);
-		//imshow("lap", laplance_src);
+		imshow("lap", laplance_src);
 
 
-		//32F的图像存入sharpImg
+		32F的图像存入sharpImg
 		src.convertTo(sharpImg, CV_32F);
 
-		//这里要用上面黑色背景的图像（black src）不然出来结果不对
+		这里要用上面黑色背景的图像（black src）不然出来结果不对
 		sharpImg = sharpImg - laplance_src;
 		sharpImg.convertTo(sharpImg, CV_8UC3);
-		//imshow("AfterSharp", sharpImg);
+		imshow("AfterSharp", sharpImg);
 
 		*/
 		#pragma endregion
 
 		#pragma region 二值化 距离变化 归一化
 		/*
-		//现在得到的sharpImg是8UC3格式 src仍然是black src dst暂时还没用上 Laplance_src后面可能用不上了
-		//准备进行第三步 二值化
-		//先转为灰色图像
+		现在得到的sharpImg是8UC3格式 src仍然是black src dst暂时还没用上 Laplance_src后面可能用不上了
+		准备进行第三步 二值化
+		先转为灰色图像
 		cvtColor(sharpImg, sharpImg, CV_BGR2GRAY);
-		//进行二值化（其实40效果并不好，我觉得140可以）（他这加了个THRESH_OTSU，结果也不一样，后来要注意一下）
+		进行二值化（其实40效果并不好，我觉得140可以）（他这加了个THRESH_OTSU，结果也不一样，后来要注意一下）
 		threshold(sharpImg, gray_src, 40, 255, THRESH_BINARY|THRESH_OTSU);
-		//进行距离变换
+		进行距离变换
 		distanceTransform(gray_src, dst, DIST_L2, 3);
-		//变换完了还看不出结果，但是归一化之后就有效果了
+		变换完了还看不出结果，但是归一化之后就有效果了
 		normalize(dst, dst, 0, 1, NORM_MINMAX);
-		//二值化得到大概标记（确实是很抽象的标记了）
+		二值化得到大概标记（确实是很抽象的标记了）
 		threshold(dst, dst, 0.4, 1, THRESH_BINARY);
-		//腐蚀
+		腐蚀
 		Mat kernel1 = Mat::ones(3, 3, CV_8UC1);
 		erode(dst, dst, kernel1);
 
@@ -653,12 +654,12 @@ int main(int argc, char** argv)
 		
 		dst.convertTo(dst,CV_8U);
 		Mat marks = Mat::zeros(dst.size(), CV_32SC1);
-		//发现轮廓
+		发现轮廓
 
-		//用于保存找到的轮廓
+		用于保存找到的轮廓
 		vector<vector<Point>> contours;
 		findContours(dst, contours, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
-		//给一个随机数种子 随机数用做随机颜色  随机颜色用于填补不同区域
+		给一个随机数种子 随机数用做随机颜色  随机颜色用于填补不同区域
 		
 		for (size_t i = 0; i < contours.size(); i++)
 		{
@@ -666,24 +667,24 @@ int main(int argc, char** argv)
 			drawContours(marks, contours, i, color, -1);//-1为填充内部
 		}
 		circle(marks, Point(5, 5), 3, Scalar(255, 255, 255), -1);
-		//展示轮廓
+		展示轮廓
 		imshow("mkr",marks* 1000);
 
 		
-		//开始分水岭变换
+		开始分水岭变换
 		watershed(src, marks);
-		//不*1000就是全黑 *了以后背景就是白色的，cards就显示出来了
+		不*1000就是全黑 *了以后背景就是白色的，cards就显示出来了
 		imshow("water", marks * 1000);
-		//下面几行代码没啥用，就是给你看看分水岭的效果
+		下面几行代码没啥用，就是给你看看分水岭的效果
 		Mat msk = Mat::zeros(marks.size(), CV_8UC1);
 		marks.convertTo(msk, CV_8UC1);
 		bitwise_not(msk, msk,Mat());
 		imshow("mak", msk);
 
 		
-		//开始上色 用的是分水岭后的marks
+		开始上色 用的是分水岭后的marks
 		vector<Vec3b> colors;
-		//准备一个随机颜色
+		准备一个随机颜色
 		for (size_t i = 0; i < contours.size(); i++)
 		{
 			int r = theRNG().uniform(0, 255);
@@ -713,7 +714,7 @@ int main(int argc, char** argv)
 		}
 		*/
 		
-		//imshow("dst", dst);
+		imshow("dst", dst);
 		#pragma endregion
 
 	#pragma endregion

@@ -52,12 +52,12 @@ int main(int argc, char** argv) {
 
 	#pragma region ShiTomasi ½Çµã¼ì²â 
 
-	/*
+	
 	namedWindow("Good", WINDOW_AUTOSIZE);
 	//ShiTomasi½Çµã¼ì²â  
 	createTrackbar("trackBarName", "Good", &maxCorner, 255, ShiTomasiTrack);
 	ShiTomasiTrack(0, 0);
-	*/
+	
 
 	#pragma endregion
 
