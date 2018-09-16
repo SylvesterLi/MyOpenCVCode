@@ -27,17 +27,19 @@ void ShiTomasiTrack(int, void *);
 
 
 int main(int argc, char** argv) {
-	//img_1 = imread("C:/Users/SANG-ASUS/Desktop/pic1.png");
-	img_1 = imread("ppp.png");
-	if (img_1.empty()) {
+	src = imread("C:/Users/SANG-ASUS/Desktop/pic1.png");
+	//img_1 = imread("ppp.png");
+	if (src.empty()) {
 		printf("could not load image...\n");
 		waitKey(0);
 		return -1;
 	}
-	imshow("input image", img_1);
+	imshow("raw image", src);
 
-	cvtColor(img_1, graySrc, CV_BGR2GRAY);
+	cvtColor(src, graySrc, CV_BGR2GRAY);
 	imshow("gray", graySrc);
+	//这里展示了两个窗口，一个是原图，一个是灰度图
+
 
 	#pragma region Harris 角点检测
 
@@ -75,8 +77,23 @@ int main(int argc, char** argv) {
 
 	#pragma region SURF 特征检测
 
+	/*
+
+	//Hessian有点像阈值，值越大 特征点越多
+	int minHessisan = 400;
+	//现在创建检测器
+	Ptr<SURF> detector = SURF::create(minHessisan);
+	vector<KeyPoint> keypoints;//存到这来
+	//检测
+	detector->detect(src, keypoints);
+	Mat kpImage;
+	//绘制关键点
+	drawKeypoints(src, keypoints, kpImage);
+
 	namedWindow("result", WINDOW_AUTOSIZE);
-	imshow("result", src);
+	imshow("result", kpImage);
+
+	*/
 
 	#pragma endregion
 
