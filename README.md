@@ -77,6 +77,29 @@ These two days I have tried SURF and SIFT,both of them are using to detect KeyPo
 
 And the result of Experiments is that there are not so much differences between SURF and SIFT, but you still say, the KeyPoints of image shows their own features, which we can conclude that SIFT seems better?
 
+Almost forget to say, their sample code looks same.
+
+```C
+
+ //SIFT跟SURF代码是一模一样的
+
+	//numOfFeatures指的是特征点的个数
+	int numOfFeatures = 400;
+	//现在创建检测器
+	Ptr<SIFT> detector = SIFT::create(numOfFeatures);
+	vector<KeyPoint> keypoints;//存到这来
+	//检测 
+	detector->detect(src, keypoints);
+	Mat kpImage;
+	//绘制关键点
+	drawKeypoints(src, keypoints, kpImage);
+
+	namedWindow("result", WINDOW_AUTOSIZE);
+	imshow("result", kpImage);
+
+```C
+
+
 ## Update 6
 
 
