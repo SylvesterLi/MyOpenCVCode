@@ -71,6 +71,15 @@ and till now, I should have finished custom corner detection, but I think it is 
 
 ## Update 5
 
+![](picsSource/SIFT.png)
+
+These two days I have tried SURF and SIFT,both of them are using to detect KeyPoints in the image which is hard for human beings to recognize what it is.
+
+And the result of Experiments is that there are not so much differences between SURF and SIFT, but you still say, the KeyPoints of image shows their own features, which we can conclude that SIFT seems better?
+
+## Update 6
+
+
 Comming soon....
 
 These days I am too lazy to update, but from now on. I will keep code updating!!!
