@@ -97,6 +97,29 @@ int main(int argc, char** argv) {
 
 	#pragma endregion
 
+	#pragma region SIFT 特征检测
+	
+	/*
+	//SIFT跟SURF代码是一模一样的
+
+	//numOfFeatures指的是特征点的个数
+	int numOfFeatures = 400;
+	//现在创建检测器
+	Ptr<SIFT> detector = SIFT::create(numOfFeatures);
+	vector<KeyPoint> keypoints;//存到这来
+	//检测 
+	detector->detect(src, keypoints);
+	Mat kpImage;
+	//绘制关键点
+	drawKeypoints(src, keypoints, kpImage);
+
+	namedWindow("result", WINDOW_AUTOSIZE);
+	imshow("result", kpImage);
+	*/
+
+	#pragma endregion
+
+
 
 	waitKey(0);
 	return 0;
