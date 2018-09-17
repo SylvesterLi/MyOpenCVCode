@@ -97,7 +97,7 @@ Almost forget to say, their sample code looks same.
 	namedWindow("result", WINDOW_AUTOSIZE);
 	imshow("result", kpImage);
 
-```C
+```
 
 
 ## Update 6
