@@ -27,7 +27,7 @@ void ShiTomasiTrack(int, void *);
 
 
 int main(int argc, char** argv) {
-	src = imread("C:/Users/SANG-ASUS/Desktop/pic1.png");
+	src = imread("C:/Users/SANG-Surface/Desktop/pic1.png");
 	//img_1 = imread("ppp.png");
 	if (src.empty()) {
 		printf("could not load image...\n");
