@@ -1,5 +1,7 @@
 ## Here is my OpenCV Learning Code
 
+## 链接：https://pan.baidu.com/s/11S-QOnE8d8rTN-6Gn44C8Q 密码：7ecv
+
 ###  Well, I am not so professional in this, but I'd like to share my learning experinence.
 
 maybe someday it goes to work out my questions~
