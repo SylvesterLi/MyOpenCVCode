@@ -134,7 +134,10 @@ int main(int argc, char** argv) {
 
 	#pragma endregion
 
-	//SVM 检测人群
+	#pragma region HOG+SVM 人群检测
+	
+	/*
+	//SVM 检测人群 7938000个描述子 速度较慢
 	HOGDescriptor hog = HOGDescriptor();
 	hog.setSVMDetector(hog.getDefaultPeopleDetector());
 	vector<Rect> foLocations;
@@ -146,6 +149,10 @@ int main(int argc, char** argv) {
 
 	}
 	imshow("hhh", newSrc);
+	*/
+
+	#pragma endregion
+
 	waitKey(0);
 	return 0;
 }
