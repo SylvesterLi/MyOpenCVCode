@@ -115,7 +115,9 @@ Just like this.
 ![](picsSource/PeopleDetect.png)
 
 
+Obviously, it is not precise to detect all people in the pic.
 
+Maybe next time I will learn how to fix this issue.
 
 Comming soon....
 
