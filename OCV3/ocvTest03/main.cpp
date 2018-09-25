@@ -27,7 +27,7 @@ void ShiTomasiTrack(int, void *);
 
 
 int main(int argc, char** argv) {
-	src = imread("C:/Users/SANG-Surface/Desktop/pic1.png");
+	src = imread("C:/Users/SANG-Surface/Desktop/peo.jpg");
 	//img_1 = imread("ppp.png");
 	if (src.empty()) {
 		printf("could not load image...\n");
@@ -119,8 +119,33 @@ int main(int argc, char** argv) {
 
 	#pragma endregion
 
-	//T
+	#pragma region Descriptors描述子
 
+	/*
+	//detector winSizae blockSize blockStrike cellSize bins(9个向量)
+	HOGDescriptor detector(Size(64, 128), Size(16, 16), Size(8, 8), Size(8, 8), 9);
+	//检测器 检测出 描述子 存放在descriptors中，其中描述子的位置放在Points的Location中
+	vector<Point> locations;
+	vector<float> descriptors;
+	detector.compute(graySrc, descriptors, Size(0, 0), Size(0, 0), locations);
+	printf("%d", descriptors.size());
+	waitKey(0);
+	*/
+
+	#pragma endregion
+
+	//SVM 检测人群
+	HOGDescriptor hog = HOGDescriptor();
+	hog.setSVMDetector(hog.getDefaultPeopleDetector());
+	vector<Rect> foLocations;
+	hog.detectMultiScale(src, foLocations,0, Size(8, 8), Size(32, 32), 1.05);
+	Mat newSrc = src.clone();
+	for (size_t i = 0; i < foLocations.size(); i++)
+	{
+		rectangle(newSrc, foLocations[i], Scalar(0, 255, 0),3);
+
+	}
+	imshow("hhh", newSrc);
 	waitKey(0);
 	return 0;
 }

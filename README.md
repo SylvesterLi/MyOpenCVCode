@@ -103,7 +103,18 @@ imshow("result", kpImage);
 
 ## Update 6 Histogram of Oriented Gradient
 
-HOG方向梯度直方图
+HOG Descriptor 
+
+Here is how to  calculate size of HOG pls refer this Link
+https://blog.csdn.net/yangpan011/article/details/78353873
+
+And in the section was tought how to use HOG to establish "Descriptor" detector and use SVM method to detect how many people in the picture you provide.
+
+Just like this.
+
+![](picsSource/PeopleDetect.png)
+
+
 
 
 Comming soon....
