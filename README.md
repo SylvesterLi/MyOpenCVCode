@@ -6,7 +6,7 @@
 
 maybe someday it goes to work out my questions~
 
-## Update 1
+## Update 1 Learning Links
 
 2018/08/25 Now we come a new stage and I should learn more professional knowledge.
 
@@ -32,7 +32,7 @@ if auto-download can't do to help, you could check these issues :
 
 At last ,google can be your best driver.
 
-## Update 2
+## Update 2 Get Files Name
 
  Finally, got it! After check and check again, it works! 
 
@@ -52,12 +52,12 @@ Write-Host($_.name);
  ```
 
 
- ##  Update 3
+ ##  Update 3 Notice
  
  In the OCV3 Project I don't use src as default input image but use img_1.Which leads me misleading and make some mistakes. In the last days, I should take care of this!!
  
 
- ## Update 4
+ ## Update 4 Good feature to track
 
  These two days, i just watch corner detection, one of detection methods is Harris , and another is Shi-Tomasi Corner detetion. In my point of view , Good Features To Track (aka Shi-Tomasi) performs better than Harris detection .
 
@@ -119,6 +119,20 @@ Obviously, it is not precise to detect all people in the pic.
 
 Maybe next time I will learn how to fix this issue.
 
+Here is code
+``` C++
+//SVM 检测人群 7938000个描述子 速度较慢
+HOGDescriptor hog = HOGDescriptor();
+hog.setSVMDetector(hog.getDefaultPeopleDetector());
+vector<Rect> foLocations;
+hog.detectMultiScale(src, foLocations,0, Size(8, 8), Size(32, 32), 1.05);
+Mat newSrc = src.clone();
+for (size_t i = 0; i < foLocations.size(); i++)
+{
+    rectangle(newSrc, foLocations[i], Scalar(0, 255, 0),3);
+}
+imshow("hhh", newSrc);
+```
 Comming soon....
 
 These days I am too lazy to update, but from now on. I will keep code updating!!!
