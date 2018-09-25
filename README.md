@@ -101,7 +101,9 @@ imshow("result", kpImage);
 ```
 
 
-## Update 6
+## Update 6 Histogram of Oriented Gradient
+
+HOG方向梯度直方图
 
 
 Comming soon....
