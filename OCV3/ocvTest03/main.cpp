@@ -163,7 +163,7 @@ int main(int argc, char** argv) {
 void HarrisTrack(int, void *)
 {
 	dst = Mat::zeros(graySrc.size(), CV_32FC1);
-	//现在
+	
 	cornerHarris(graySrc, dst, 2, 3, 0.04);
 	normalize(dst, normDst, 0,255, NORM_MINMAX);	
 	//现在dst为ScaleAbs的结果
