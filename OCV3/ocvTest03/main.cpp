@@ -184,6 +184,62 @@ int main(int argc, char** argv) {
 
 	#pragma endregion
 
+	//作用：匹配两张图像
+	
+	//需要两个描述子
+	//本次采用SURF描述子
+	Ptr<SURF> detector = SURF::create(400);
+	//储存两个描述子的keypoint
+	vector<KeyPoint> keyPoint_1;
+	vector<KeyPoint> keyPoint_2;
+
+	//声明两个描述子
+	Mat descriptor_1, descriptor_2;
+	detector->detectAndCompute(src, Mat(), keyPoint_1, descriptor_1);
+	detector->detectAndCompute(img_1, Mat(), keyPoint_2, descriptor_2);
+
+	//匹配
+	FlannBasedMatcher flannMatches;
+	vector<DMatch> matches;//匹配了放这儿
+	flannMatches.match(descriptor_1, descriptor_2, matches);
+
+	//找到好的匹配点filter good matches point 过滤
+	//不过滤跟BFMatch效果一样，都是花的
+	double minDist = 1000;
+	double maxDist = 0;
+	for (int i = 0; i < descriptor_1.rows; i++)
+	{
+		double dist = matches[i].distance;
+		if (dist > maxDist)
+		{
+			maxDist = dist;
+		}
+		if (dist < minDist)
+		{
+			minDist = dist;
+		}
+		printf("max:%f\n", maxDist);
+		printf("min:%f\n", minDist);
+	}//这儿算是划定最大最小值，下面才是有点像归一化
+	printf("max:%f\n", maxDist);
+	printf("min:%f\n", minDist);
+
+	vector<DMatch> goodMatch;
+	for (int j = 0; j < descriptor_1.rows; j++)
+	{
+		double dist = matches[j].distance;
+		if (dist < max(2 * minDist, 0.02))//这个是干嘛的？
+		{
+			goodMatch.push_back(matches[j]);
+		}
+	}
+
+
+
+	Mat resImg;
+	drawMatches(src, keyPoint_1, img_1, keyPoint_2, goodMatch, resImg);
+	imshow("res img", resImg);
+
 	
 
 
