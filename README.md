@@ -133,7 +133,57 @@ for (size_t i = 0; i < foLocations.size(); i++)
 }
 imshow("hhh", newSrc);
 ```
-Comming soon....
+
+## Update 7 Descriptor
+
+Yesterday, we learnt how to use HOG to recoginize the count of people. And today we are practicing to use descriptors to match a thing in another pic such as looking for a book in the gallery.
+
+Picture blow shows what we are looking for.
+
+> ![](picsSource/peoPart.png)
+
+And this is the pic we download form Internet.
+
+> ![](picsSource/peo.jpg)
+
+After compiling these code:
+
+```C++
+//作用：匹配两张图像
+
+//需要两个描述子
+//本次采用SURF描述子
+Ptr<SURF> detector = SURF::create(400);
+//储存两个描述子的keypoint
+vector<KeyPoint> keyPoint_1;
+vector<KeyPoint> keyPoint_2;
+
+//声明两个描述子
+Mat descriptor_1, descriptor_2;
+detector->detectAndCompute(src, Mat(), keyPoint_1, descriptor_1);
+detector->detectAndCompute(img_1, Mat(), keyPoint_2, descriptor_2);
+
+//匹配
+BFMatcher bfMatcher;
+vector<DMatch> matches;
+bfMatcher.match(descriptor_1, descriptor_2, matches);
+
+//绘画
+Mat resImg;
+drawMatches(src, keyPoint_1, img_1, keyPoint_2, matches, resImg);
+imshow("res", resImg);
+```
+
+We got :
+
+![](picsSource/bfMatcher.png)
+
+The steps of code and why we write this show in comments.
+
+
+--- 
+
+Next UPDATE Comming soon....
 
 These days I am too lazy to update, but from now on. I will keep code updating!!!
 

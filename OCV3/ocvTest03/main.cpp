@@ -28,6 +28,7 @@ void ShiTomasiTrack(int, void *);
 
 int main(int argc, char** argv) {
 	src = imread("C:/Users/SANG-Surface/Desktop/peo.jpg");
+	img_1 = imread("C:/Users/SANG-Surface/Desktop/peoPart.png");
 	//img_1 = imread("ppp.png");
 	if (src.empty()) {
 		printf("could not load image...\n");
@@ -35,9 +36,9 @@ int main(int argc, char** argv) {
 		return -1;
 	}
 	imshow("raw image", src);
-
-	cvtColor(src, graySrc, CV_BGR2GRAY);
-	imshow("gray", graySrc);
+	imshow("Part Image", img_1);
+	//cvtColor(src, graySrc, CV_BGR2GRAY);
+	//imshow("gray", graySrc);
 	//这里展示了两个窗口，一个是原图，一个是灰度图
 
 
@@ -149,6 +150,36 @@ int main(int argc, char** argv) {
 
 	}
 	imshow("hhh", newSrc);
+	*/
+
+	#pragma endregion
+
+	#pragma region Descriptor 描述子
+	/*
+	//作用：匹配两张图像
+	
+	//需要两个描述子
+	//本次采用SURF描述子
+	Ptr<SURF> detector = SURF::create(400);
+	//储存两个描述子的keypoint
+	vector<KeyPoint> keyPoint_1;
+	vector<KeyPoint> keyPoint_2;
+
+	//声明两个描述子
+	Mat descriptor_1, descriptor_2;
+	detector->detectAndCompute(src, Mat(), keyPoint_1, descriptor_1);
+	detector->detectAndCompute(img_1, Mat(), keyPoint_2, descriptor_2);
+
+	//匹配
+	BFMatcher bfMatcher;
+	vector<DMatch> matches;
+	bfMatcher.match(descriptor_1, descriptor_2, matches);
+
+	//绘画
+	Mat resImg;
+	drawMatches(src, keyPoint_1, img_1, keyPoint_2, matches, resImg);
+	imshow("res", resImg);
+
 	*/
 
 	#pragma endregion
