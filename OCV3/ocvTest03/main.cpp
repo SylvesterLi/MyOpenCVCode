@@ -184,8 +184,11 @@ int main(int argc, char** argv) {
 
 	#pragma endregion
 
+	#pragma region FLANN过滤特征点
+
+	/*
 	//作用：匹配两张图像
-	
+
 	//需要两个描述子
 	//本次采用SURF描述子
 	Ptr<SURF> detector = SURF::create(400);
@@ -234,14 +237,13 @@ int main(int argc, char** argv) {
 		}
 	}
 
-
-
 	Mat resImg;
 	drawMatches(src, keyPoint_1, img_1, keyPoint_2, goodMatch, resImg);
 	imshow("res img", resImg);
 
-	
+	*/
 
+	#pragma endregion
 
 	waitKey(0);
 	return 0;

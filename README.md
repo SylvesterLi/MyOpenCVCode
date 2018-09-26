@@ -178,8 +178,19 @@ We got :
 
 ![](picsSource/bfMatcher.png)
 
-The steps of code and why we write this show in comments.
+The steps of code and why I write this show in comments.
 
+## Update 8 FLANN
+
+Using API FlannBasedMatcher, I got the same result as BruteForce Match.
+
+![](picsSource/noFilter.png)
+
+The filter is necessary to use, and the effect is obviously.You could esaily recognize them.
+
+![](picsSource/FLANN.png)
+
+However I could not totally understand how it works.
 
 --- 
 
