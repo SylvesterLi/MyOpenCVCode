@@ -185,7 +185,7 @@ int main(int argc, char** argv) {
 	#pragma endregion
 
 	#pragma region FLANN过滤特征点
-
+	/*
 	
 	//作用：匹配两张图像 src & img_1 最后生成res_img
 
@@ -243,10 +243,11 @@ int main(int argc, char** argv) {
 
 	
 
-
+	*/
 	#pragma endregion
 
-
+	//findHomograph ： 发现两个平面的透视变换，生成变换矩阵
+	//perspectiveTransform 透视变换
 
 
 	waitKey(0);
