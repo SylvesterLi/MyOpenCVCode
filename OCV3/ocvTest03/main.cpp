@@ -27,8 +27,8 @@ void ShiTomasiTrack(int, void *);
 
 
 int main(int argc, char** argv) {
-	src = imread("C:/Users/SANG-Surface/Desktop/peo.jpg");
-	img_1 = imread("C:/Users/SANG-Surface/Desktop/peoPart.png");
+	src = imread("C:/Users/SANG-Surface/Desktop/jss.jpg");
+	img_1 = imread("C:/Users/SANG-Surface/Desktop/233.png");
 	//img_1 = imread("ppp.png");
 	if (src.empty()) {
 		printf("could not load image...\n");
@@ -186,8 +186,8 @@ int main(int argc, char** argv) {
 
 	#pragma region FLANN过滤特征点
 
-	/*
-	//作用：匹配两张图像
+	
+	//作用：匹配两张图像 src & img_1 最后生成res_img
 
 	//需要两个描述子
 	//本次采用SURF描述子
@@ -241,7 +241,8 @@ int main(int argc, char** argv) {
 	drawMatches(src, keyPoint_1, img_1, keyPoint_2, goodMatch, resImg);
 	imshow("res img", resImg);
 
-	*/
+	
+
 
 	#pragma endregion
 

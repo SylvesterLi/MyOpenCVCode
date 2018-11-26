@@ -194,6 +194,13 @@ However I could not totally understand how it works.
 
 --- 
 
+
+## Update 9 
+
+
+
+
+
 recently I am thinking of how to choose between ASP.Net and OpenCV. My company needs me to learn ASP.Net to build some websites, which is aimed to optimize workflow.
 
 My teacher told me that solving your working issue which leads your direction.OpenCV now could be added to wait list.When I get free time, I may learn it again.
