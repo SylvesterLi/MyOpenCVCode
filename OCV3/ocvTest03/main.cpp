@@ -27,8 +27,8 @@ void ShiTomasiTrack(int, void *);
 
 
 int main(int argc, char** argv) {
-	src = imread("C:/Users/SANG-Surface/Desktop/jss.jpg");
-	img_1 = imread("C:/Users/SANG-Surface/Desktop/233.png");
+	src = imread("C:/Users/SANG-ASUS/Desktop/pic1.png");
+	//img_1 = imread("C:/Users/SANG-Surface/Desktop/233.png");
 	//img_1 = imread("ppp.png");
 	if (src.empty()) {
 		printf("could not load image...\n");
@@ -36,7 +36,7 @@ int main(int argc, char** argv) {
 		return -1;
 	}
 	imshow("raw image", src);
-	imshow("Part Image", img_1);
+	//imshow("Part Image", img_1);
 	//cvtColor(src, graySrc, CV_BGR2GRAY);
 	//imshow("gray", graySrc);
 	//这里展示了两个窗口，一个是原图，一个是灰度图
@@ -250,6 +250,9 @@ int main(int argc, char** argv) {
 	//perspectiveTransform 透视变换
 
 	#pragma region AKAZE 局部匹配
+
+	/*
+
 	//速度更快，比SURF　SIFT比较
 	//AOS构造尺度空间
 	//Hessian 矩阵特征点检测
@@ -269,20 +272,41 @@ int main(int argc, char** argv) {
 	drawKeypoints(src, keyPoints, keyPointImage, Scalar::all(-1), DrawMatchesFlags::DEFAULT);;
 	imshow("kaze res", keyPointImage);
 
-
-
-		
-		
-		
-		
-		
-	
-	
-		
-		
+	*/				
 	#pragma endregion
+	
+	#pragma region FaceDetection 人脸检测
+	/*
 
+	//在Surface上需要更改位置（用的是自带的face训练集）
+	String caPath = "F:/OCV/opencv/newbuild/install/etc/haarcascades/haarcascade_frontalface_alt.xml";
+	CascadeClassifier face_cascade;
+	if (!face_cascade.load(caPath))
+	{
+		printf("face cascade could not load");
+		waitKey(0);
+		return -1;
+		
+	}
 
+	cvtColor(src, graySrc, COLOR_BGR2GRAY);
+	equalizeHist(graySrc, graySrc);
+
+	vector<Rect> faces;
+	face_cascade.detectMultiScale(graySrc, faces,1.1,2,0,Size(30,30));
+	for (size_t i = 0; i < faces.size(); i++)
+	{
+		rectangle(src, faces[i], Scalar(0, 0, 255));
+	}
+	namedWindow("face detection", WINDOW_AUTOSIZE);
+	imshow("face detection", src);
+
+	*/
+	#pragma endregion
+	
+	
+	
+	
 	waitKey(0);
 	return 0;
 }

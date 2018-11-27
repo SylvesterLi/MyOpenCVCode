@@ -216,6 +216,69 @@ Here is the KAZE image:
 
 AKAZE accelerates the process time of KAZE, just replace "KAZE" by "AKAZE". Other codes keep same.
 
+## Update 10 Face Detection
+
+BRISK took a short time.And the "Face Detection" really annoyed me.
+
+After fuking two months learning ,just a few lines of code could be implement. I am regreting why I learning for so long.
+
+Fine,it is ok. And time for now I should write how to use Face Detection Code:
+
+Here is fucking fish code：
+
+![](picsSource/face_code.png)
+
+First we should find our OpenCV install folder where we could find 
+
+![](picsSource/face_xml.png)
+
+And full path that I used in code.which you could replace yours:
+
+```C
+String caPath = "F:/OCV/opencv/newbuild/install/etc/haarcascades/haarcascade_frontalface_alt.xml";
+```
+Ok,then you could just paste my code and press F5 run the program.
+
+```C++
+
+#pragma region FaceDetection 人脸检测
+
+//在Surface上需要更改位置（用的是自带的face训练集）
+String caPath = "F:/OCV/opencv/newbuild/install/etc/haarcascades/haarcascade_frontalface_alt.xml";
+CascadeClassifier face_cascade;
+if (!face_cascade.load(caPath))
+{
+    printf("face cascade could not load");
+    waitKey(0);
+    return -1;
+}
+
+cvtColor(src, graySrc, COLOR_BGR2GRAY);
+equalizeHist(graySrc, graySrc);
+
+vector<Rect> faces;
+face_cascade.detectMultiScale(graySrc, faces,1.1,2,0,Size(30,30));
+for (size_t i = 0; i < faces.size(); i++)
+{
+    rectangle(src, faces[i], Scalar(0, 0, 255));
+}
+namedWindow("face detection", WINDOW_AUTOSIZE);
+imshow("face detection", src);
+
+#pragma endregion
+
+```
+
+the result shows:
+
+![](picsSource/facedet.png)
+
++  Oh, btw,you need to replace your face picture path,which named "src".And graySrc is temporary Mat to store gray pic.
+
+---
+
+
+
 recently I am thinking of how to choose between ASP.Net and OpenCV. My company needs me to learn ASP.Net to build some websites, which is aimed to optimize workflow.
 
 My teacher told me that solving your working issue which leads your direction.OpenCV now could be added to wait list.When I get free time, I may learn it again.
