@@ -249,6 +249,39 @@ int main(int argc, char** argv) {
 	//findHomograph ： 发现两个平面的透视变换，生成变换矩阵
 	//perspectiveTransform 透视变换
 
+	#pragma region AKAZE 局部匹配
+	//速度更快，比SURF　SIFT比较
+	//AOS构造尺度空间
+	//Hessian 矩阵特征点检测
+	//方向指定基于一阶微分图像
+	//生成描述子
+	//KAZE AKAZE
+
+	//读取图像
+	//Create对象
+	Ptr<KAZE> detector = KAZE::create();
+	vector<KeyPoint> keyPoints;
+	detector->detect(src, keyPoints);
+	
+	printf("KAZE");
+	
+	Mat keyPointImage;
+	drawKeypoints(src, keyPoints, keyPointImage, Scalar::all(-1), DrawMatchesFlags::DEFAULT);;
+	imshow("kaze res", keyPointImage);
+
+
+
+		
+		
+		
+		
+		
+	
+	
+		
+		
+	#pragma endregion
+
 
 	waitKey(0);
 	return 0;

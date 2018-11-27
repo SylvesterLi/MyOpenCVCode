@@ -195,11 +195,26 @@ However I could not totally understand how it works.
 --- 
 
 
-## Update 9 
+## Update 9 KAZE
+``` C++
+Ptr<KAZE> detector = KAZE::create();
+vector<KeyPoint> keyPoints;
+detector->detect(src, keyPoints);
 
+printf("KAZE");
 
+Mat keyPointImage;
+drawKeypoints(src, keyPoints, keyPointImage, Scalar::all(-1), DrawMatchesFlags::DEFAULT);;
+imshow("kaze res", keyPointImage);
+```
 
+As the description said, the performance is better than SURF and SHIF, but I could not tell.
 
+Here is the KAZE image:
+
+![](picsSource/kaze.png)
+
+AKAZE accelerates the process time of KAZE, just replace "KAZE" by "AKAZE". Other codes keep same.
 
 recently I am thinking of how to choose between ASP.Net and OpenCV. My company needs me to learn ASP.Net to build some websites, which is aimed to optimize workflow.
 
