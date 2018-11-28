@@ -273,7 +273,7 @@ the result shows:
 
 ![](picsSource/facedet.png)
 
-+  Oh, btw,you need to replace your face picture path,which named "src".And graySrc is temporary Mat to store gray pic.
+>   Oh, btw,you need to replace your face picture path,which named "src".And graySrc is temporary Mat to store gray pic.
 
 ---
 
