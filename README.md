@@ -6,6 +6,8 @@
 
 maybe someday it goes to work out my questions~
 
+# Session 1 Basic
+
 ## Update 1 Learning Links
 
 2018/08/25 Now we come a new stage and I should learn more professional knowledge.
@@ -133,6 +135,7 @@ for (size_t i = 0; i < foLocations.size(); i++)
 }
 imshow("hhh", newSrc);
 ```
+# Session 2 Features
 
 ## Update 7 Descriptor
 
@@ -276,6 +279,9 @@ the result shows:
 >   Oh, btw,you need to replace your face picture path,which named "src".And graySrc is temporary Mat to store gray pic.
 
 ---
+
+# Session 3 Small Test Cases
+
 
 
 

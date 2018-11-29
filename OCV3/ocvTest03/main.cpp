@@ -19,11 +19,16 @@ int harrisThresh = 127;
 int threshMax = 255;
 //最大角点数
 int maxCorner = 5;
+int contours_TH = 127;
+int skew_TH = 127;
 
 
 //方法声明
 void HarrisTrack(int, void *);
 void ShiTomasiTrack(int, void *);
+void findROI(int, void *);//寻找边缘
+void Check_Skew(int, void*);
+
 
 
 int main(int argc, char** argv) {
@@ -304,6 +309,14 @@ int main(int argc, char** argv) {
 	*/
 	#pragma endregion
 	
+	#pragma region 图像正位切边
+
+	
+
+
+
+	#pragma endregion
+
 	
 	
 	
@@ -366,3 +379,47 @@ void ShiTomasiTrack(int, void *)
 
 
 }
+
+void findROI(int, void *)//寻找边缘
+{
+	cvtColor(src, graySrc, COLOR_BGR2GRAY);
+	Mat canny_output;
+	Canny(graySrc, canny_output, contours_TH, contours_TH * 2);
+	vector<vector<Point>>contours;
+	vector<Vec4i> hierachy;
+	findContours(canny_output, contours, hierachy, RETR_TREE, CHAIN_APPROX_SIMPLE, Point(0));
+
+}
+
+void Check_Skew(int, void *)
+{
+	Mat canny_output;
+	Canny(graySrc, canny_output, skew_TH, skew_TH * 2);
+
+	vector<vector<Point>> contours;
+	vector<Vec4i> hierachy;
+	findContours(canny_output, contours, hierachy, RETR_TREE, CHAIN_APPROX_SIMPLE, Point(0, 0));
+	Mat drawImg = Mat::zeros(src.size(), CV_8UC3);
+
+	float maxWidth = 0;
+	float maxHeight = 0;
+	double degree = 0;
+	for (size_t i = 0; i < contours.size(); i++)
+	{
+		RotatedRect minRect = minAreaRect(contours[i]);
+		degree = abs(minRect.angle);//有可能是负值 所以用了abs绝对值
+		if (degree > 0)
+		{
+			maxWidth = max(maxWidth, minRect.size.width);
+			maxHeight = max(maxHeight, minRect.size.width);
+
+		}
+		RNG rng(12345);//随机颜色
+		
+		
+		
+	}
+}
+
+
+
