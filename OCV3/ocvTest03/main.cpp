@@ -12,16 +12,18 @@ using namespace std;
 
 //当前img_1为原图像
 //src未使用，dst为目标图像，graySrc为灰度图，normDst为归一化图像
-Mat src, dst, img_1,graySrc,normDst;
-
+Mat src, dst, img_1,graySrc,normDst, gray_img;
+Mat src_img = imread("./processPics/123.png");
 //变量声明
 int harrisThresh = 127;
 int threshMax = 255;
 //最大角点数
 int maxCorner = 5;
 int contours_TH = 127;
-int skew_TH = 50;
-
+int skew_TH = 30;
+int threshold_value = 100;
+string output_win = "Contours Result";
+string roi_win = "Final Result";
 
 //方法声明
 void HarrisTrack(int, void *);
@@ -34,7 +36,7 @@ void Check_Skew();
 int main(int argc, char** argv) {
 	//这里需要注意：在Surface上是SANG-Surface
 	src = imread("./processPics/123.png");
-	//img_1 = imread("./processPics/233.png");
+	//img_1 = imread("./processPics/magz.jpg");
 	//img_1 = imread("ppp.png");
 	if (src.empty()) {
 		printf("could not load image...\n");
@@ -315,10 +317,11 @@ int main(int argc, char** argv) {
 	//https://blog.csdn.net/weixin_41695564/article/details/80077706
 	
 	//Check_Skew();
-	namedWindow("resultPic", WINDOW_AUTOSIZE);
-	createTrackbar("Threshold:", "resultPic", &skew_TH, 255, findROI);
-	findROI(0, 0);
 
+	namedWindow(output_win, WINDOW_AUTOSIZE);
+	createTrackbar("Threshold:", output_win, &threshold_value, 255, findROI);
+	findROI(0, 0);
+	
 	#pragma endregion
 
 	
@@ -385,11 +388,12 @@ void ShiTomasiTrack(int, void *)
 
 }
 
-void findROI(int, void *)//寻找边缘
+//Why: Find ROI 找不到轮廓，如果去掉if判断 又会出现很多多余的框框
+void fXindROI(int, void *)//寻找边缘
 {
 	
 	cout << "**************当前阈值：" << skew_TH << "******************************\n" << endl;
-	Mat src_img = imread("./processPics/123.png");
+	Mat src_img = imread("./processPics/magz.jpg");
 	Mat mBlur;
 	medianBlur(src_img, mBlur, 11);
 	//cvtColor(src_img, graySrc, COLOR_BGR2GRAY);      //将原图转化为灰度图
@@ -464,47 +468,18 @@ void findROI(int, void *)//寻找边缘
 //矫正位置
 void Check_Skew()
 {
-	/*
-	Mat canny_output;
-	Canny(graySrc, canny_output, skew_TH, skew_TH * 2);
-
-	vector<vector<Point>> contours;
-	vector<Vec4i> hierachy;
-	findContours(canny_output, contours, hierachy, RETR_TREE, CHAIN_APPROX_SIMPLE, Point(0, 0));
-	Mat drawImg = Mat::zeros(src.size(), CV_8UC3);
-
-	float maxWidth = 0;
-	float maxHeight = 0;
-	double degree = 0;
-	for (size_t i = 0; i < contours.size(); i++)
-	{
-		RotatedRect minRect = minAreaRect(contours[i]);
-		degree = abs(minRect.angle);//有可能是负值 所以用了abs绝对值
-		if (degree > 0)
-		{
-			maxWidth = max(maxWidth, minRect.size.width);
-			maxHeight = max(maxHeight, minRect.size.width);
-
-		}
-		RNG rng(12345);//随机颜色
-		
-		
-		
-	}
-	*/
-
-
-
 	Mat canny_output;
 	Mat mBlur;
 	
 	//直接Canny的效果不好
 	//先模糊看看
 	//然后把界限最好放清楚一点 使用了中值模糊
-
+	
 	medianBlur(src, mBlur,11);
+	
+	//cvtColor(src, graySrc, COLOR_BGR2GRAY);         //将原图转化为灰度图
 	imshow("mb", mBlur);
-	//cvtColor(mBlur, graySrc, COLOR_BGR2GRAY);         //将原图转化为灰度图
+	
 	//Why: 不知道为啥 不能使用灰度图
 	Canny(mBlur, canny_output, skew_TH, skew_TH * 2, 3, false);      // canny边缘检测
 	imshow("ca", canny_output);
@@ -518,23 +493,24 @@ void Check_Skew()
 	float max_width = 0;       // 定义最大宽度
 	float max_height = 0;      // 定义最大高度
 	double degree = 0;         // 定义旋转角度
+	//这个for是为了找最大的框
 	for (auto t = 0; t < contours.size(); ++t)            // 遍历每一个轮廓   
 	{
 		RotatedRect minRect = minAreaRect(contours[t]);        // 找到每一个轮廓的最小外包旋转矩形，RotatedRect里面包含了中心坐标、尺寸以及旋转角度等信息   
 		degree = abs(minRect.angle);
-		if (degree > 0)
-		{
-			max_width = max(max_width, minRect.size.width);
-			max_height = max(max_height, minRect.size.height);
-		}
+		max_width = max(max_width, minRect.size.width);
+		max_height = max(max_height, minRect.size.height);
 	}
 	RNG rng(12345);
+	//这是为了画出最大的框
 	for (auto t = 0; t < contours.size(); ++t)
 	{
 		RotatedRect minRect = minAreaRect(contours[t]);
-		if (max_width == minRect.size.width && max_height == minRect.size.height)
+		if (max_width == minRect.size.width || max_height == minRect.size.height)
 		{
 			degree = minRect.angle;   // 保存目标轮廓的角度
+		
+		
 			Point2f pts[4];
 			minRect.points(pts);
 			Scalar color = Scalar(rng.uniform(0, 255), rng.uniform(0, 255), rng.uniform(0, 255));  //产生随机颜色
@@ -542,19 +518,86 @@ void Check_Skew()
 			{
 				line(drawImg, pts[i], pts[(i + 1) % 4], color, 2, 8, 0);
 			}
+			cout << "Size:" << minRect.size <<"Degree:"<<degree << endl;
 		}
+		
 	}
 
 	imshow("找到的矩形轮廓", drawImg);
-	Point2f center(src.cols / 2, src.rows / 2);
-	Mat rotm = getRotationMatrix2D(center, degree, 1.0);    //获取仿射变换矩阵
-	Mat dst;
-	warpAffine(src, dst, rotm, src.size(), INTER_LINEAR, BORDER_REPLICATE, Scalar(255, 255, 255));    // 进行图像旋转操作
-	imwrite("./processPics/123.png", dst);      //将校正后的图像保存下来
-	imshow("correct image", dst);
+	//Point2f center(src.cols / 2, src.rows / 2);
+	//Mat rotm = getRotationMatrix2D(center, degree, 1.0);    //获取仿射变换矩阵
+	//Mat dst;
+	//warpAffine(src, dst, rotm, src.size(), INTER_LINEAR, BORDER_REPLICATE, Scalar(255, 255, 255));    // 进行图像旋转操作
+	//imwrite("./processPics/123.png", dst);      //将校正后的图像保存下来
+	//imshow("correct image", dst);
 
 	
 }
 
 
+void findROI(int, void*)
+{
+	
+	printf("**************当前阈值：%d******************************\n", threshold_value);
+	//cvtColor(src_img, gray_img, COLOR_BGR2GRAY);      //将原图转化为灰度图
+	Mat canny_output;
+	Mat mBlur;
+	medianBlur(src, mBlur, 11);
+	Canny(mBlur, canny_output, threshold_value, threshold_value * 2, 3, false);                // canny边缘检测
+	imshow("canny_output", canny_output);
+	vector<vector<Point>> contours;
+	vector<Vec4i> hireachy;
+	findContours(canny_output, contours, hireachy, RETR_TREE, CHAIN_APPROX_SIMPLE, Point(0, 0));    // 调用API，找到轮廓
+
+	// 筛选contours中的轮廓，我们需要最大的那个轮廓
+	float max_width = 0;       // 定义最大宽度
+	float max_height = 0;      // 定义最大高度
+	double degree = 0;         // 定义旋转角度
+	//这个for是为了找最大的框
+	for (auto t = 0; t < contours.size(); ++t)            // 遍历每一个轮廓   
+	{
+		RotatedRect minRect = minAreaRect(contours[t]);        // 找到每一个轮廓的最小外包旋转矩形，RotatedRect里面包含了中心坐标、尺寸以及旋转角度等信息   
+		degree = abs(minRect.angle);
+		max_width = max(max_width, minRect.size.width);
+		max_height = max(max_height, minRect.size.height);
+	}
+
+	RNG rng(12345);                            //定义一个随机数产生器，用来产生不同颜色的矩形框
+	Mat drawImage = Mat::zeros(src_img.size(), CV_8UC3);
+	Rect bbox;
+	for (auto t = 0; t < contours.size(); ++t)        // 遍历每一个轮廓
+	{
+		RotatedRect minRect = minAreaRect(contours[t]);        // 找到每一个轮廓的最小外包旋转矩形，RotatedRect里面包含了中心坐标、尺寸以及旋转角度等信息
+		
+		if ((minRect.size.width == max_width || minRect.size.height == max_height) && minRect.size.width > 620)   //筛选最小外包旋转矩形
+		{
+			printf("current angle : %f\n", degree);
+			Mat vertices;       // 定义一个4行2列的单通道float类型的Mat，用来存储旋转矩形的四个顶点
+			boxPoints(minRect, vertices);    // 计算旋转矩形的四个顶点坐标
+			bbox = boundingRect(vertices);   //找到输入点集的最小外包直立矩形，返回Rect类型
+			cout << "最小外包矩形：" << bbox << endl;
+			Scalar color = Scalar(rng.uniform(0, 255), rng.uniform(0, 255), rng.uniform(0, 255));   //产生随机颜色
+			for (int i = 0; i < 4; i++)             // 遍历每个旋转矩形的四个顶点坐标
+			{
+				// 在相邻的顶点之间绘制直线
+				Mat p1 = vertices.row(i); // 使用成员函数row(i)和col(j)得到矩阵的第i行或者第j列，返回值仍然是一个单通道的Mat类型
+				int j = (i + 1) % 4;
+				Mat p2 = vertices.row(j);
+				Point p1_point = Point(p1.at<float>(0, 0), p1.at<float>(0, 1)); //将Mat类型的顶点坐标转换为Point类型
+				Point p2_point = Point(p2.at<float>(0, 0), p2.at<float>(0, 1));
+				line(src, p1_point, p2_point, color, 2, 8, 0);    // 根据得到的四个顶点，通过连接四个顶点，将最小旋转矩形绘制出来
+			}
+		}
+	}
+	imshow(output_win, src);
+
+	if (bbox.width > 0 && bbox.height > 0)
+	{
+		Mat roiImg = src_img(bbox);        //从原图中截取兴趣区域
+		namedWindow(roi_win, CV_WINDOW_AUTOSIZE);
+		imshow(roi_win, roiImg);
+	}
+
+	return;
+}
 
