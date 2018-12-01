@@ -33,15 +33,15 @@ void Check_Skew();
 
 int main(int argc, char** argv) {
 	//这里需要注意：在Surface上是SANG-Surface
-	src = imread("C:/Users/SANG-Surface/Desktop/123.png");
-	//img_1 = imread("C:/Users/SANG-Surface/Desktop/233.png");
+	src = imread("./processPics/123.png");
+	//img_1 = imread("./processPics/233.png");
 	//img_1 = imread("ppp.png");
 	if (src.empty()) {
 		printf("could not load image...\n");
 		waitKey(0);
 		return -1;
 	}
-	//imshow("raw image", src);
+	imshow("raw image", src);
 	//imshow("Part Image", img_1);
 	//cvtColor(src, graySrc, CV_BGR2GRAY);
 	//imshow("gray", graySrc);
@@ -389,7 +389,7 @@ void findROI(int, void *)//寻找边缘
 {
 	
 	cout << "**************当前阈值：" << skew_TH << "******************************\n" << endl;
-	Mat src_img = imread("c:/users/sang-surface/desktop/123.png");
+	Mat src_img = imread("./processPics/123.png");
 	Mat mBlur;
 	medianBlur(src_img, mBlur, 11);
 	//cvtColor(src_img, graySrc, COLOR_BGR2GRAY);      //将原图转化为灰度图
@@ -550,7 +550,7 @@ void Check_Skew()
 	Mat rotm = getRotationMatrix2D(center, degree, 1.0);    //获取仿射变换矩阵
 	Mat dst;
 	warpAffine(src, dst, rotm, src.size(), INTER_LINEAR, BORDER_REPLICATE, Scalar(255, 255, 255));    // 进行图像旋转操作
-	imwrite("c:/users/sang-surface/desktop/123.png", dst);      //将校正后的图像保存下来
+	imwrite("./processPics/123.png", dst);      //将校正后的图像保存下来
 	imshow("correct image", dst);
 
 	
