@@ -318,9 +318,9 @@ int main(int argc, char** argv) {
 	
 	//Check_Skew();
 
-	namedWindow(output_win, WINDOW_AUTOSIZE);
+	/*namedWindow(output_win, WINDOW_AUTOSIZE);
 	createTrackbar("Threshold:", output_win, &threshold_value, 255, findROI);
-	findROI(0, 0);
+	findROI(0, 0);*/
 	
 	#pragma endregion
 
@@ -524,12 +524,12 @@ void Check_Skew()
 	}
 
 	imshow("找到的矩形轮廓", drawImg);
-	//Point2f center(src.cols / 2, src.rows / 2);
-	//Mat rotm = getRotationMatrix2D(center, degree, 1.0);    //获取仿射变换矩阵
-	//Mat dst;
-	//warpAffine(src, dst, rotm, src.size(), INTER_LINEAR, BORDER_REPLICATE, Scalar(255, 255, 255));    // 进行图像旋转操作
-	//imwrite("./processPics/123.png", dst);      //将校正后的图像保存下来
-	//imshow("correct image", dst);
+	Point2f center(src.cols / 2, src.rows / 2);
+	Mat rotm = getRotationMatrix2D(center, degree, 1.0);    //获取仿射变换矩阵
+	Mat dst;
+	warpAffine(src, dst, rotm, src.size(), INTER_LINEAR, BORDER_REPLICATE, Scalar(255, 255, 255));    // 进行图像旋转操作
+	imwrite("./processPics/123.png", dst);      //将校正后的图像保存下来
+	imshow("correct image", dst);
 
 	
 }
