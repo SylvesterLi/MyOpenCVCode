@@ -20,19 +20,20 @@ int threshMax = 255;
 //最大角点数
 int maxCorner = 5;
 int contours_TH = 127;
-int skew_TH = 127;
+int skew_TH = 25;
 
 
 //方法声明
 void HarrisTrack(int, void *);
 void ShiTomasiTrack(int, void *);
 void findROI(int, void *);//寻找边缘
-void Check_Skew(int, void*);
+void Check_Skew();
 
 
 
 int main(int argc, char** argv) {
-	src = imread("C:/Users/SANG-ASUS/Desktop/pic1.png");
+	//这里需要注意：在Surface上是SANG-Surface
+	src = imread("C:/Users/SANG-Surface/Desktop/magz.jpg");
 	//img_1 = imread("C:/Users/SANG-Surface/Desktop/233.png");
 	//img_1 = imread("ppp.png");
 	if (src.empty()) {
@@ -312,7 +313,7 @@ int main(int argc, char** argv) {
 	#pragma region 图像正位切边
 
 	
-
+	Check_Skew();
 
 
 	#pragma endregion
@@ -391,8 +392,9 @@ void findROI(int, void *)//寻找边缘
 
 }
 
-void Check_Skew(int, void *)
+void Check_Skew()
 {
+	/*
 	Mat canny_output;
 	Canny(graySrc, canny_output, skew_TH, skew_TH * 2);
 
@@ -419,6 +421,57 @@ void Check_Skew(int, void *)
 		
 		
 	}
+	*/
+
+
+
+	Mat canny_output;
+	cvtColor(src, graySrc, COLOR_BGR2GRAY);         //将原图转化为灰度图
+	Canny(graySrc, canny_output, skew_TH, skew_TH * 2, 3, false);      // canny边缘检测
+	imshow("ca", canny_output);
+	vector<vector<Point>> contours;
+	vector<Vec4i> hireachy;
+	findContours(canny_output, contours, hireachy, RETR_TREE, CHAIN_APPROX_SIMPLE, Point(0, 0));    // 找到所有轮廓
+	Mat drawImg = Mat::zeros(src.size(), CV_8UC3);
+	float max_width = 0;       // 定义最大宽度
+	float max_height = 0;      // 定义最大高度
+	double degree = 0;         // 定义旋转角度
+	for (auto t = 0; t < contours.size(); ++t)            // 遍历每一个轮廓   
+	{
+		RotatedRect minRect = minAreaRect(contours[t]);        // 找到每一个轮廓的最小外包旋转矩形，RotatedRect里面包含了中心坐标、尺寸以及旋转角度等信息   
+		degree = abs(minRect.angle);
+		if (degree > 0)
+		{
+			max_width = max(max_width, minRect.size.width);
+			max_height = max(max_height, minRect.size.height);
+		}
+	}
+	RNG rng(12345);
+	for (auto t = 0; t < contours.size(); ++t)
+	{
+		RotatedRect minRect = minAreaRect(contours[t]);
+		if (max_width == minRect.size.width && max_height == minRect.size.height)
+		{
+			degree = minRect.angle;   // 保存目标轮廓的角度
+			Point2f pts[4];
+			minRect.points(pts);
+			Scalar color = Scalar(rng.uniform(0, 255), rng.uniform(0, 255), rng.uniform(0, 255));  //产生随机颜色
+			for (int i = 0; i < 4; ++i)
+			{
+				line(drawImg, pts[i], pts[(i + 1) % 4], color, 2, 8, 0);
+			}
+		}
+	}
+
+	imshow("找到的矩形轮廓", drawImg);
+	//Point2f center(src.cols / 2, src.rows / 2);
+	//Mat rotm = getRotationMatrix2D(center, degree, 1.0);    //获取仿射变换矩阵
+	//Mat dst;
+	//warpAffine(src, dst, rotm, src.size(), INTER_LINEAR, 0, Scalar(255, 255, 255));    // 进行图像旋转操作
+	//imwrite("C:/Users/SANG-Surface/Desktop/123.png", dst);      //将校正后的图像保存下来
+	//imshow("Correct Image", dst);
+
+	
 }
 
 
