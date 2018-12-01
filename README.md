@@ -285,8 +285,8 @@ the result shows:
 ## Update 11 切边
 
 > 代码可参考： https://blog.csdn.net/weixin_41695564/article/details/80077706 
-> 非常详细
 
+And here is my own experinence : https://segmentfault.com/a/1190000017221248
 
 recently I am thinking of how to choose between ASP.Net and OpenCV. My company needs me to learn ASP.Net to build some websites, which is aimed to optimize workflow.
 
