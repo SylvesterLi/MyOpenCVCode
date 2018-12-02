@@ -282,11 +282,14 @@ the result shows:
 
 # Session 3 Small Test Cases
 
-## Update 11 切边
+## Update 11 Small case
 
 > 代码可参考： https://blog.csdn.net/weixin_41695564/article/details/80077706 
 
-And here is my own experinence : https://segmentfault.com/a/1190000017221248
+> And here is my own experinence : https://segmentfault.com/a/1190000017221248
+
+> In another way, this article should be read carefully : https://www.cnblogs.com/skyfsm/p/6879265.html
+    which tells how to write code of boder detection.
 
 recently I am thinking of how to choose between ASP.Net and OpenCV. My company needs me to learn ASP.Net to build some websites, which is aimed to optimize workflow.
 
