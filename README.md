@@ -282,7 +282,7 @@ the result shows:
 
 # Session 3 Small Test Cases
 
-## Update 11 Small case
+## Update 11 Trim Edge
 
 > 代码可参考： https://blog.csdn.net/weixin_41695564/article/details/80077706 
 
@@ -290,6 +290,14 @@ the result shows:
 
 > In another way, this article should be read carefully : https://www.cnblogs.com/skyfsm/p/6879265.html
     which tells how to write code of boder detection.
+
+## Update 12 Straight Line Detection	
+
+The full experience is recorded at here : https://segmentfault.com/a/1190000017257827
+	
+	
+	
+---
 
 recently I am thinking of how to choose between ASP.Net and OpenCV. My company needs me to learn ASP.Net to build some websites, which is aimed to optimize workflow.
 
