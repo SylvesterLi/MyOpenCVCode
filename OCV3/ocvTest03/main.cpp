@@ -35,7 +35,7 @@ void Check_Skew();
 
 int main(int argc, char** argv) {
 	//这里需要注意：在Surface上是SANG-Surface
-	src = imread("./processPics/123.png");
+	src = imread("./processPics/subLine.jpg");
 	//img_1 = imread("./processPics/magz.jpg");
 	//img_1 = imread("ppp.png");
 	if (src.empty()) {
@@ -324,7 +324,38 @@ int main(int argc, char** argv) {
 	
 	#pragma endregion
 
+	#pragma region 直线检测
 	
+	Mat src_output;
+	src.convertTo(src_output, -1,3,0);//3是亮度
+	imshow("src_out2", src_output);//现在这个亮度还不错
+	
+	//二值化
+	cvtColor(src_output, graySrc, CV_BGR2GRAY);
+	threshold(graySrc, graySrc, 0,255, THRESH_BINARY_INV | THRESH_OTSU);
+	imshow("th_out", graySrc);
+
+	//形态学操作
+	Mat kernel = getStructuringElement(MORPH_RECT, Size(20, 1));
+	
+	morphologyEx(graySrc, graySrc, MORPH_OPEN, kernel);
+	imshow("mor", graySrc);
+
+	//霍夫直线检测
+	//注意api
+	vector<Vec4i> lines;
+	HoughLinesP(graySrc, lines,1,CV_PI / 180.0,10,7.0,0);
+	for (size_t i = 0; i < lines.size(); i++)
+	{
+		Vec4i currPoints = lines[i];
+		//这里可以骚着写
+		line(src, Point(currPoints[0],currPoints[1]), Point(lines[i][2],lines[i][3]), Scalar(0, 0, 255));
+
+	}
+	imshow("src", src);
+
+	#pragma endregion
+
 	
 	
 	waitKey(0);
