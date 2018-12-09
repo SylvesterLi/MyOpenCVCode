@@ -35,7 +35,7 @@ void Check_Skew();
 
 int main(int argc, char** argv) {
 	//这里需要注意：在Surface上是SANG-Surface
-	src = imread("./processPics/subLine.jpg");
+	src = imread("./processPics/sfseed.jpg");
 	//img_1 = imread("./processPics/magz.jpg");
 	//img_1 = imread("ppp.png");
 	if (src.empty()) {
@@ -43,6 +43,7 @@ int main(int argc, char** argv) {
 		waitKey(0);
 		return -1;
 	}
+	
 	imshow("raw image", src);
 	//imshow("Part Image", img_1);
 	//cvtColor(src, graySrc, CV_BGR2GRAY);
@@ -356,9 +357,13 @@ int main(int argc, char** argv) {
 
 	#pragma endregion
 
-	#pragma region 对象提取
+	#pragma region ObjectsCount 对象计数
 
-	
+	//sfseed.jpg为少量瓜子 sfseeds.jpg数量较多
+	//
+	Mat src_output;
+	src.convertTo(src_output, -1,3,0);//3是亮度
+	imshow("src_out2", src_output);//现在这个亮度还不错
 
 
 	#pragma endregion
