@@ -356,10 +356,63 @@ int main(int argc, char** argv) {
 
 	#pragma endregion
 
-	#pragma region 对象提取
-
 	
+	#pragma region 对象提取
+	
+	//二值分割 形态学处理 距离变换 连通区域计算
+	//借鉴代码：https://blog.csdn.net/huanghuangjin/article/details/81347863
+	//晚点添加了图片上来再重现
 
+	Mat gray_src, binary, dst;
+	//Mat src = imread("images/case3-4.png");
+	imshow("src3-4", src);
+	cvtColor(src, gray_src, COLOR_BGR2GRAY);
+
+	// 二值分割+形态学处理+距离变换+局部自适应阈值+连通区域计算
+	// 二值分割
+	threshold(gray_src, binary, 0, 255, THRESH_BINARY | THRESH_TRIANGLE);
+	imshow("binary image", binary);
+
+	// 形态学操作
+	Mat kernel = getStructuringElement(MORPH_RECT, Size(3, 3), Point(-1, -1));
+	// 膨胀，尽可能的将挨在一起的对象分隔开来，但不是代表挨着的一定能分开。膨胀的次数很重要，本案例膨胀次数4-5次都行
+	dilate(binary, binary, kernel, Point(-1, -1), 4);
+	imshow("dilate image", binary);
+
+	// 距离变换
+	Mat dist;
+	bitwise_not(binary, binary); // 反差颜色值
+	distanceTransform(binary, dist, CV_DIST_L2, 3);
+	cout << "1 dist depth=" << dist.depth() << ", type=" << dist.type() << endl; // 1 dist depth=5, type=5
+	normalize(dist, dist, 0, 1.0, NORM_MINMAX); // 归一化后才好分割山头
+	cout << "2 dist depth=" << dist.depth() << ", type=" << dist.type() << endl; // 2 dist depth=5, type=5
+	imshow("dist image", dist);
+
+	// 阈值化二值分割
+	//threshold(dist, dist, 0.6, 1.0, THRESH_BINARY);
+	//normalize(dist, dist, 0, 255, NORM_MINMAX);
+	Mat dist_8u;
+	dist.convertTo(dist_8u, CV_8U);
+	// 这里要使用 局部自适应阈值与ADAPTIVE_THRESH_GAUSSIAN_C， 使用ADAPTIVE_THRESH_MEAN_C 或直接使用 threshold ， 无法达到目的
+	adaptiveThreshold(dist_8u, dist_8u, 255, ADAPTIVE_THRESH_GAUSSIAN_C, THRESH_BINARY, 85, 0.0); // 局部自适应阈值，这里使用ADAPTIVE_THRESH_GAUSSIAN_C
+	//dilate(dist_8u, dist_8u, kernel, Point(-1, -1),   1); // 再次膨胀一下，膨胀的次数很重要，直接影响最终的对象计数，将两次膨胀次数合并在上面也可以
+	imshow("dist-binary", dist_8u);
+
+	// 连通区域计数
+	vector<vector<Point>> contours;
+	findContours(dist_8u, contours, CV_RETR_EXTERNAL, CHAIN_APPROX_SIMPLE); // RETR_EXTERNAL:表示只检测最外层轮廓，对所有轮廓设置hierarchy[i][2]=hierarchy[i][3]=-1
+	cout << "contours.size=" << contours.size() << endl; // contours.size=17
+
+	// draw result
+	Mat markers = Mat::zeros(src.size(), CV_8UC3);
+	RNG rng(12345);
+	for (size_t t = 0; t < contours.size(); t++)
+	{
+		drawContours(markers, contours, static_cast<int>(t), Scalar(rng.uniform(0, 255), rng.uniform(0, 255), rng.uniform(0, 255)), -1, 8, Mat());
+	}
+	printf("number of corns : %d", contours.size()); // number of corns : 17
+	imshow("Final result", markers);
+	
 
 	#pragma endregion
 
