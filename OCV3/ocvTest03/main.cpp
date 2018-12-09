@@ -10,14 +10,14 @@ using namespace cv;
 using namespace cv::xfeatures2d;
 using namespace std;
 
-//µ±Ç°img_1ÎªÔ­Í¼Ïñ
-//srcÎ´Ê¹ÓÃ£¬dstÎªÄ¿±êÍ¼Ïñ£¬graySrcÎª»Ò¶ÈÍ¼£¬normDstÎª¹éÒ»»¯Í¼Ïñ
+//å½“å‰img_1ä¸ºåŸå›¾åƒ
+//srcæœªä½¿ç”¨ï¼Œdstä¸ºç›®æ ‡å›¾åƒï¼ŒgraySrcä¸ºç°åº¦å›¾ï¼ŒnormDstä¸ºå½’ä¸€åŒ–å›¾åƒ
 Mat src, dst, img_1,graySrc,normDst, gray_img;
 Mat src_img = imread("./processPics/123.png");
-//±äÁ¿ÉùÃ÷
+//å˜é‡å£°æ˜
 int harrisThresh = 127;
 int threshMax = 255;
-//×î´ó½ÇµãÊı
+//æœ€å¤§è§’ç‚¹æ•°
 int maxCorner = 5;
 int contours_TH = 127;
 int skew_TH = 30;
@@ -25,17 +25,17 @@ int threshold_value = 100;
 string output_win = "Contours Result";
 string roi_win = "Final Result";
 
-//·½·¨ÉùÃ÷
+//æ–¹æ³•å£°æ˜
 void HarrisTrack(int, void *);
 void ShiTomasiTrack(int, void *);
-void findROI(int, void *);//Ñ°ÕÒ±ßÔµ
+void findROI(int, void *);//å¯»æ‰¾è¾¹ç¼˜
 void Check_Skew();
 
 
 
 int main(int argc, char** argv) {
-	//ÕâÀïĞèÒª×¢Òâ£ºÔÚSurfaceÉÏÊÇSANG-Surface
-	src = imread("./processPics/subLine.jpg");
+	//è¿™é‡Œéœ€è¦æ³¨æ„ï¼šåœ¨Surfaceä¸Šæ˜¯SANG-Surface
+	src = imread("./processPics/sfseed.jpg");
 	//img_1 = imread("./processPics/magz.jpg");
 	//img_1 = imread("ppp.png");
 	if (src.empty()) {
@@ -43,16 +43,17 @@ int main(int argc, char** argv) {
 		waitKey(0);
 		return -1;
 	}
+	
 	imshow("raw image", src);
 	//imshow("Part Image", img_1);
 	//cvtColor(src, graySrc, CV_BGR2GRAY);
 	//imshow("gray", graySrc);
-	//ÕâÀïÕ¹Ê¾ÁËÁ½¸ö´°¿Ú£¬Ò»¸öÊÇÔ­Í¼£¬Ò»¸öÊÇ»Ò¶ÈÍ¼
+	//è¿™é‡Œå±•ç¤ºäº†ä¸¤ä¸ªçª—å£ï¼Œä¸€ä¸ªæ˜¯åŸå›¾ï¼Œä¸€ä¸ªæ˜¯ç°åº¦å›¾
 
 
-	#pragma region Harris ½Çµã¼ì²â
+	#pragma region Harris è§’ç‚¹æ£€æµ‹
 
-	//Harris½Çµã¼ì²â ²Î¿¼
+	//Harrisè§’ç‚¹æ£€æµ‹ å‚è€ƒ
 	//https://blog.csdn.net/woxincd/article/details/60754658 
 
 	//namedWindow("harris", WINDOW_AUTOSIZE);
@@ -61,12 +62,12 @@ int main(int argc, char** argv) {
 
 	#pragma endregion
 
-	#pragma region ShiTomasi ½Çµã¼ì²â 
+	#pragma region ShiTomasi è§’ç‚¹æ£€æµ‹ 
 
 	/*
 
 	namedWindow("Good", WINDOW_AUTOSIZE);
-	//ShiTomasi½Çµã¼ì²â  
+	//ShiTomasiè§’ç‚¹æ£€æµ‹  
 	createTrackbar("trackBarName", "Good", &maxCorner, 255, ShiTomasiTrack);
 	ShiTomasiTrack(0, 0);
 	
@@ -74,9 +75,9 @@ int main(int argc, char** argv) {
 
 	#pragma endregion
 
-	#pragma region ×Ô¶¨Òå½Çµã¼ì²â
+	#pragma region è‡ªå®šä¹‰è§’ç‚¹æ£€æµ‹
 
-	//²Î¿¼ÎÄÕÂ£º
+	//å‚è€ƒæ–‡ç« ï¼š
 	//https://blog.csdn.net/weixin_41695564/article/details/79979784  
 
 	
@@ -84,19 +85,19 @@ int main(int argc, char** argv) {
 
 	#pragma endregion
 
-	#pragma region SURF ÌØÕ÷¼ì²â
+	#pragma region SURF ç‰¹å¾æ£€æµ‹
 
 	/*
 
-	//HessianÓĞµãÏñãĞÖµ£¬ÖµÔ½´ó ÌØÕ÷µãÔ½¶à
+	//Hessianæœ‰ç‚¹åƒé˜ˆå€¼ï¼Œå€¼è¶Šå¤§ ç‰¹å¾ç‚¹è¶Šå¤š
 	int minHessisan = 400;
-	//ÏÖÔÚ´´½¨¼ì²âÆ÷
+	//ç°åœ¨åˆ›å»ºæ£€æµ‹å™¨
 	Ptr<SURF> detector = SURF::create(minHessisan);
-	vector<KeyPoint> keypoints;//´æµ½ÕâÀ´
-	//¼ì²â
+	vector<KeyPoint> keypoints;//å­˜åˆ°è¿™æ¥
+	//æ£€æµ‹
 	detector->detect(src, keypoints);
 	Mat kpImage;
-	//»æÖÆ¹Ø¼üµã
+	//ç»˜åˆ¶å…³é”®ç‚¹
 	drawKeypoints(src, keypoints, kpImage);
 
 	namedWindow("result", WINDOW_AUTOSIZE);
@@ -106,20 +107,20 @@ int main(int argc, char** argv) {
 
 	#pragma endregion
 
-	#pragma region SIFT ÌØÕ÷¼ì²â
+	#pragma region SIFT ç‰¹å¾æ£€æµ‹
 	
 	/*
-	//SIFT¸úSURF´úÂëÊÇÒ»Ä£Ò»ÑùµÄ
+	//SIFTè·ŸSURFä»£ç æ˜¯ä¸€æ¨¡ä¸€æ ·çš„
 
-	//numOfFeaturesÖ¸µÄÊÇÌØÕ÷µãµÄ¸öÊı
+	//numOfFeaturesæŒ‡çš„æ˜¯ç‰¹å¾ç‚¹çš„ä¸ªæ•°
 	int numOfFeatures = 400;
-	//ÏÖÔÚ´´½¨¼ì²âÆ÷
+	//ç°åœ¨åˆ›å»ºæ£€æµ‹å™¨
 	Ptr<SIFT> detector = SIFT::create(numOfFeatures);
-	vector<KeyPoint> keypoints;//´æµ½ÕâÀ´
-	//¼ì²â 
+	vector<KeyPoint> keypoints;//å­˜åˆ°è¿™æ¥
+	//æ£€æµ‹ 
 	detector->detect(src, keypoints);
 	Mat kpImage;
-	//»æÖÆ¹Ø¼üµã
+	//ç»˜åˆ¶å…³é”®ç‚¹
 	drawKeypoints(src, keypoints, kpImage);
 
 	namedWindow("result", WINDOW_AUTOSIZE);
@@ -128,12 +129,12 @@ int main(int argc, char** argv) {
 
 	#pragma endregion
 
-	#pragma region DescriptorsÃèÊö×Ó
+	#pragma region Descriptorsæè¿°å­
 
 	/*
-	//detector winSizae blockSize blockStrike cellSize bins(9¸öÏòÁ¿)
+	//detector winSizae blockSize blockStrike cellSize bins(9ä¸ªå‘é‡)
 	HOGDescriptor detector(Size(64, 128), Size(16, 16), Size(8, 8), Size(8, 8), 9);
-	//¼ì²âÆ÷ ¼ì²â³ö ÃèÊö×Ó ´æ·ÅÔÚdescriptorsÖĞ£¬ÆäÖĞÃèÊö×ÓµÄÎ»ÖÃ·ÅÔÚPointsµÄLocationÖĞ
+	//æ£€æµ‹å™¨ æ£€æµ‹å‡º æè¿°å­ å­˜æ”¾åœ¨descriptorsä¸­ï¼Œå…¶ä¸­æè¿°å­çš„ä½ç½®æ”¾åœ¨Pointsçš„Locationä¸­
 	vector<Point> locations;
 	vector<float> descriptors;
 	detector.compute(graySrc, descriptors, Size(0, 0), Size(0, 0), locations);
@@ -143,10 +144,10 @@ int main(int argc, char** argv) {
 
 	#pragma endregion
 
-	#pragma region HOG+SVM ÈËÈº¼ì²â
+	#pragma region HOG+SVM äººç¾¤æ£€æµ‹
 	
 	/*
-	//SVM ¼ì²âÈËÈº 7938000¸öÃèÊö×Ó ËÙ¶È½ÏÂı
+	//SVM æ£€æµ‹äººç¾¤ 7938000ä¸ªæè¿°å­ é€Ÿåº¦è¾ƒæ…¢
 	HOGDescriptor hog = HOGDescriptor();
 	hog.setSVMDetector(hog.getDefaultPeopleDetector());
 	vector<Rect> foLocations;
@@ -162,28 +163,28 @@ int main(int argc, char** argv) {
 
 	#pragma endregion
 
-	#pragma region Descriptor ÃèÊö×Ó
+	#pragma region Descriptor æè¿°å­
 	/*
-	//×÷ÓÃ£ºÆ¥ÅäÁ½ÕÅÍ¼Ïñ
+	//ä½œç”¨ï¼šåŒ¹é…ä¸¤å¼ å›¾åƒ
 	
-	//ĞèÒªÁ½¸öÃèÊö×Ó
-	//±¾´Î²ÉÓÃSURFÃèÊö×Ó
+	//éœ€è¦ä¸¤ä¸ªæè¿°å­
+	//æœ¬æ¬¡é‡‡ç”¨SURFæè¿°å­
 	Ptr<SURF> detector = SURF::create(400);
-	//´¢´æÁ½¸öÃèÊö×ÓµÄkeypoint
+	//å‚¨å­˜ä¸¤ä¸ªæè¿°å­çš„keypoint
 	vector<KeyPoint> keyPoint_1;
 	vector<KeyPoint> keyPoint_2;
 
-	//ÉùÃ÷Á½¸öÃèÊö×Ó
+	//å£°æ˜ä¸¤ä¸ªæè¿°å­
 	Mat descriptor_1, descriptor_2;
 	detector->detectAndCompute(src, Mat(), keyPoint_1, descriptor_1);
 	detector->detectAndCompute(img_1, Mat(), keyPoint_2, descriptor_2);
 
-	//Æ¥Åä
+	//åŒ¹é…
 	BFMatcher bfMatcher;
 	vector<DMatch> matches;
 	bfMatcher.match(descriptor_1, descriptor_2, matches);
 
-	//»æ»­
+	//ç»˜ç”»
 	Mat resImg;
 	drawMatches(src, keyPoint_1, img_1, keyPoint_2, matches, resImg);
 	imshow("res", resImg);
@@ -192,30 +193,30 @@ int main(int argc, char** argv) {
 
 	#pragma endregion
 
-	#pragma region FLANN¹ıÂËÌØÕ÷µã
+	#pragma region FLANNè¿‡æ»¤ç‰¹å¾ç‚¹
 	/*
 	
-	//×÷ÓÃ£ºÆ¥ÅäÁ½ÕÅÍ¼Ïñ src & img_1 ×îºóÉú³Éres_img
+	//ä½œç”¨ï¼šåŒ¹é…ä¸¤å¼ å›¾åƒ src & img_1 æœ€åç”Ÿæˆres_img
 
-	//ĞèÒªÁ½¸öÃèÊö×Ó
-	//±¾´Î²ÉÓÃSURFÃèÊö×Ó
+	//éœ€è¦ä¸¤ä¸ªæè¿°å­
+	//æœ¬æ¬¡é‡‡ç”¨SURFæè¿°å­
 	Ptr<SURF> detector = SURF::create(400);
-	//´¢´æÁ½¸öÃèÊö×ÓµÄkeypoint
+	//å‚¨å­˜ä¸¤ä¸ªæè¿°å­çš„keypoint
 	vector<KeyPoint> keyPoint_1;
 	vector<KeyPoint> keyPoint_2;
 
-	//ÉùÃ÷Á½¸öÃèÊö×Ó
+	//å£°æ˜ä¸¤ä¸ªæè¿°å­
 	Mat descriptor_1, descriptor_2;
 	detector->detectAndCompute(src, Mat(), keyPoint_1, descriptor_1);
 	detector->detectAndCompute(img_1, Mat(), keyPoint_2, descriptor_2);
 
-	//Æ¥Åä
+	//åŒ¹é…
 	FlannBasedMatcher flannMatches;
-	vector<DMatch> matches;//Æ¥ÅäÁË·ÅÕâ¶ù
+	vector<DMatch> matches;//åŒ¹é…äº†æ”¾è¿™å„¿
 	flannMatches.match(descriptor_1, descriptor_2, matches);
 
-	//ÕÒµ½ºÃµÄÆ¥Åäµãfilter good matches point ¹ıÂË
-	//²»¹ıÂË¸úBFMatchĞ§¹ûÒ»Ñù£¬¶¼ÊÇ»¨µÄ
+	//æ‰¾åˆ°å¥½çš„åŒ¹é…ç‚¹filter good matches point è¿‡æ»¤
+	//ä¸è¿‡æ»¤è·ŸBFMatchæ•ˆæœä¸€æ ·ï¼Œéƒ½æ˜¯èŠ±çš„
 	double minDist = 1000;
 	double maxDist = 0;
 	for (int i = 0; i < descriptor_1.rows; i++)
@@ -231,7 +232,7 @@ int main(int argc, char** argv) {
 		}
 		printf("max:%f\n", maxDist);
 		printf("min:%f\n", minDist);
-	}//Õâ¶ùËãÊÇ»®¶¨×î´ó×îĞ¡Öµ£¬ÏÂÃæ²ÅÊÇÓĞµãÏñ¹éÒ»»¯
+	}//è¿™å„¿ç®—æ˜¯åˆ’å®šæœ€å¤§æœ€å°å€¼ï¼Œä¸‹é¢æ‰æ˜¯æœ‰ç‚¹åƒå½’ä¸€åŒ–
 	printf("max:%f\n", maxDist);
 	printf("min:%f\n", minDist);
 
@@ -239,7 +240,7 @@ int main(int argc, char** argv) {
 	for (int j = 0; j < descriptor_1.rows; j++)
 	{
 		double dist = matches[j].distance;
-		if (dist < max(2 * minDist, 0.02))//Õâ¸öÊÇ¸ÉÂïµÄ£¿
+		if (dist < max(2 * minDist, 0.02))//è¿™ä¸ªæ˜¯å¹²å˜›çš„ï¼Ÿ
 		{
 			goodMatch.push_back(matches[j]);
 		}
@@ -254,22 +255,22 @@ int main(int argc, char** argv) {
 	*/
 	#pragma endregion
 
-	//findHomograph £º ·¢ÏÖÁ½¸öÆ½ÃæµÄÍ¸ÊÓ±ä»»£¬Éú³É±ä»»¾ØÕó
-	//perspectiveTransform Í¸ÊÓ±ä»»
+	//findHomograph ï¼š å‘ç°ä¸¤ä¸ªå¹³é¢çš„é€è§†å˜æ¢ï¼Œç”Ÿæˆå˜æ¢çŸ©é˜µ
+	//perspectiveTransform é€è§†å˜æ¢
 
-	#pragma region AKAZE ¾Ö²¿Æ¥Åä
+	#pragma region AKAZE å±€éƒ¨åŒ¹é…
 
 	/*
 
-	//ËÙ¶È¸ü¿ì£¬±ÈSURF¡¡SIFT±È½Ï
-	//AOS¹¹Ôì³ß¶È¿Õ¼ä
-	//Hessian ¾ØÕóÌØÕ÷µã¼ì²â
-	//·½ÏòÖ¸¶¨»ùÓÚÒ»½×Î¢·ÖÍ¼Ïñ
-	//Éú³ÉÃèÊö×Ó
+	//é€Ÿåº¦æ›´å¿«ï¼Œæ¯”SURFã€€SIFTæ¯”è¾ƒ
+	//AOSæ„é€ å°ºåº¦ç©ºé—´
+	//Hessian çŸ©é˜µç‰¹å¾ç‚¹æ£€æµ‹
+	//æ–¹å‘æŒ‡å®šåŸºäºä¸€é˜¶å¾®åˆ†å›¾åƒ
+	//ç”Ÿæˆæè¿°å­
 	//KAZE AKAZE
 
-	//¶ÁÈ¡Í¼Ïñ
-	//Create¶ÔÏó
+	//è¯»å–å›¾åƒ
+	//Createå¯¹è±¡
 	Ptr<KAZE> detector = KAZE::create();
 	vector<KeyPoint> keyPoints;
 	detector->detect(src, keyPoints);
@@ -283,10 +284,10 @@ int main(int argc, char** argv) {
 	*/				
 	#pragma endregion
 	
-	#pragma region FaceDetection ÈËÁ³¼ì²â
+	#pragma region FaceDetection äººè„¸æ£€æµ‹
 	/*
 
-	//ÔÚSurfaceÉÏĞèÒª¸ü¸ÄÎ»ÖÃ£¨ÓÃµÄÊÇ×Ô´øµÄfaceÑµÁ·¼¯£©
+	//åœ¨Surfaceä¸Šéœ€è¦æ›´æ”¹ä½ç½®ï¼ˆç”¨çš„æ˜¯è‡ªå¸¦çš„faceè®­ç»ƒé›†ï¼‰
 	String caPath = "F:/OCV/opencv/newbuild/install/etc/haarcascades/haarcascade_frontalface_alt.xml";
 	CascadeClassifier face_cascade;
 	if (!face_cascade.load(caPath))
@@ -312,7 +313,7 @@ int main(int argc, char** argv) {
 	*/
 	#pragma endregion
 	
-	#pragma region Í¼ÏñÕıÎ»ÇĞ±ß
+	#pragma region å›¾åƒæ­£ä½åˆ‡è¾¹
 
 	//https://blog.csdn.net/weixin_41695564/article/details/80077706
 	
@@ -324,31 +325,31 @@ int main(int argc, char** argv) {
 	
 	#pragma endregion
 
-	#pragma region LineDetection Ö±Ïß¼ì²â
+	#pragma region LineDetection ç›´çº¿æ£€æµ‹
 	
 	//Mat src_output;
-	//src.convertTo(src_output, -1,3,0);//3ÊÇÁÁ¶È
-	//imshow("src_out2", src_output);//ÏÖÔÚÕâ¸öÁÁ¶È»¹²»´í
+	//src.convertTo(src_output, -1,3,0);//3æ˜¯äº®åº¦
+	//imshow("src_out2", src_output);//ç°åœ¨è¿™ä¸ªäº®åº¦è¿˜ä¸é”™
 	//
-	////¶şÖµ»¯
+	////äºŒå€¼åŒ–
 	//cvtColor(src_output, graySrc, CV_BGR2GRAY);
 	//threshold(graySrc, graySrc, 0,255, THRESH_BINARY_INV | THRESH_OTSU);
 	//imshow("th_out", graySrc);
 
-	////ĞÎÌ¬Ñ§²Ù×÷
+	////å½¢æ€å­¦æ“ä½œ
 	//Mat kernel = getStructuringElement(MORPH_RECT, Size(20, 1));
 	//
 	//morphologyEx(graySrc, graySrc, MORPH_OPEN, kernel);
 	//imshow("mor", graySrc);
 
-	////»ô·òÖ±Ïß¼ì²â
-	////×¢Òâapi
+	////éœå¤«ç›´çº¿æ£€æµ‹
+	////æ³¨æ„api
 	//vector<Vec4i> lines;
 	//HoughLinesP(graySrc, lines,1,CV_PI / 180.0,10,7.0,0);
 	//for (size_t i = 0; i < lines.size(); i++)
 	//{
 	//	Vec4i currPoints = lines[i];
-	//	//ÕâÀï¿ÉÒÔÉ§×ÅĞ´
+	//	//è¿™é‡Œå¯ä»¥éªšç€å†™
 	//	line(src, Point(currPoints[0],currPoints[1]), Point(lines[i][2],lines[i][3]), Scalar(0, 0, 255));
 
 	//}
@@ -356,54 +357,55 @@ int main(int argc, char** argv) {
 
 	#pragma endregion
 
+
 	
-	#pragma region ¶ÔÏóÌáÈ¡
+	#pragma region å¯¹è±¡æå–
 	
-	//¶şÖµ·Ö¸î ĞÎÌ¬Ñ§´¦Àí ¾àÀë±ä»» Á¬Í¨ÇøÓò¼ÆËã
-	//½è¼ø´úÂë£ºhttps://blog.csdn.net/huanghuangjin/article/details/81347863
-	//ÍíµãÌí¼ÓÁËÍ¼Æ¬ÉÏÀ´ÔÙÖØÏÖ
+	//äºŒå€¼åˆ†å‰² å½¢æ€å­¦å¤„ç† è·ç¦»å˜æ¢ è¿é€šåŒºåŸŸè®¡ç®—
+	//å€Ÿé‰´ä»£ç ï¼šhttps://blog.csdn.net/huanghuangjin/article/details/81347863
+	//æ™šç‚¹æ·»åŠ äº†å›¾ç‰‡ä¸Šæ¥å†é‡ç°
 
 	Mat gray_src, binary, dst;
 	//Mat src = imread("images/case3-4.png");
 	imshow("src3-4", src);
 	cvtColor(src, gray_src, COLOR_BGR2GRAY);
 
-	// ¶şÖµ·Ö¸î+ĞÎÌ¬Ñ§´¦Àí+¾àÀë±ä»»+¾Ö²¿×ÔÊÊÓ¦ãĞÖµ+Á¬Í¨ÇøÓò¼ÆËã
-	// ¶şÖµ·Ö¸î
+	// äºŒå€¼åˆ†å‰²+å½¢æ€å­¦å¤„ç†+è·ç¦»å˜æ¢+å±€éƒ¨è‡ªé€‚åº”é˜ˆå€¼+è¿é€šåŒºåŸŸè®¡ç®—
+	// äºŒå€¼åˆ†å‰²
 	threshold(gray_src, binary, 0, 255, THRESH_BINARY | THRESH_TRIANGLE);
 	imshow("binary image", binary);
 
-	// ĞÎÌ¬Ñ§²Ù×÷
+	// å½¢æ€å­¦æ“ä½œ
 	Mat kernel = getStructuringElement(MORPH_RECT, Size(3, 3), Point(-1, -1));
-	// ÅòÕÍ£¬¾¡¿ÉÄÜµÄ½«°¤ÔÚÒ»ÆğµÄ¶ÔÏó·Ö¸ô¿ªÀ´£¬µ«²»ÊÇ´ú±í°¤×ÅµÄÒ»¶¨ÄÜ·Ö¿ª¡£ÅòÕÍµÄ´ÎÊıºÜÖØÒª£¬±¾°¸ÀıÅòÕÍ´ÎÊı4-5´Î¶¼ĞĞ
+	// è†¨èƒ€ï¼Œå°½å¯èƒ½çš„å°†æŒ¨åœ¨ä¸€èµ·çš„å¯¹è±¡åˆ†éš”å¼€æ¥ï¼Œä½†ä¸æ˜¯ä»£è¡¨æŒ¨ç€çš„ä¸€å®šèƒ½åˆ†å¼€ã€‚è†¨èƒ€çš„æ¬¡æ•°å¾ˆé‡è¦ï¼Œæœ¬æ¡ˆä¾‹è†¨èƒ€æ¬¡æ•°4-5æ¬¡éƒ½è¡Œ
 	dilate(binary, binary, kernel, Point(-1, -1), 4);
 	imshow("dilate image", binary);
 
-	// ¾àÀë±ä»»
+	// è·ç¦»å˜æ¢
 	Mat dist;
-	bitwise_not(binary, binary); // ·´²îÑÕÉ«Öµ
+	bitwise_not(binary, binary); // åå·®é¢œè‰²å€¼
 	distanceTransform(binary, dist, CV_DIST_L2, 3);
 	cout << "1 dist depth=" << dist.depth() << ", type=" << dist.type() << endl; // 1 dist depth=5, type=5
-	normalize(dist, dist, 0, 1.0, NORM_MINMAX); // ¹éÒ»»¯ºó²ÅºÃ·Ö¸îÉ½Í·
+	normalize(dist, dist, 0, 1.0, NORM_MINMAX); // å½’ä¸€åŒ–åæ‰å¥½åˆ†å‰²å±±å¤´
 	cout << "2 dist depth=" << dist.depth() << ", type=" << dist.type() << endl; // 2 dist depth=5, type=5
 	imshow("dist image", dist);
 
-	// ãĞÖµ»¯¶şÖµ·Ö¸î
+	// é˜ˆå€¼åŒ–äºŒå€¼åˆ†å‰²
 	//threshold(dist, dist, 0.6, 1.0, THRESH_BINARY);
 	//normalize(dist, dist, 0, 255, NORM_MINMAX);
 	Mat dist_8u;
 	dist.convertTo(dist_8u, CV_8U);
-	// ÕâÀïÒªÊ¹ÓÃ ¾Ö²¿×ÔÊÊÓ¦ãĞÖµÓëADAPTIVE_THRESH_GAUSSIAN_C£¬ Ê¹ÓÃADAPTIVE_THRESH_MEAN_C »òÖ±½ÓÊ¹ÓÃ threshold £¬ ÎŞ·¨´ïµ½Ä¿µÄ
-	adaptiveThreshold(dist_8u, dist_8u, 255, ADAPTIVE_THRESH_GAUSSIAN_C, THRESH_BINARY, 85, 0.0); // ¾Ö²¿×ÔÊÊÓ¦ãĞÖµ£¬ÕâÀïÊ¹ÓÃADAPTIVE_THRESH_GAUSSIAN_C
-	//dilate(dist_8u, dist_8u, kernel, Point(-1, -1),   1); // ÔÙ´ÎÅòÕÍÒ»ÏÂ£¬ÅòÕÍµÄ´ÎÊıºÜÖØÒª£¬Ö±½ÓÓ°Ïì×îÖÕµÄ¶ÔÏó¼ÆÊı£¬½«Á½´ÎÅòÕÍ´ÎÊıºÏ²¢ÔÚÉÏÃæÒ²¿ÉÒÔ
+	// è¿™é‡Œè¦ä½¿ç”¨ å±€éƒ¨è‡ªé€‚åº”é˜ˆå€¼ä¸ADAPTIVE_THRESH_GAUSSIAN_Cï¼Œ ä½¿ç”¨ADAPTIVE_THRESH_MEAN_C æˆ–ç›´æ¥ä½¿ç”¨ threshold ï¼Œ æ— æ³•è¾¾åˆ°ç›®çš„
+	adaptiveThreshold(dist_8u, dist_8u, 255, ADAPTIVE_THRESH_GAUSSIAN_C, THRESH_BINARY, 85, 0.0); // å±€éƒ¨è‡ªé€‚åº”é˜ˆå€¼ï¼Œè¿™é‡Œä½¿ç”¨ADAPTIVE_THRESH_GAUSSIAN_C
+	//dilate(dist_8u, dist_8u, kernel, Point(-1, -1),   1); // å†æ¬¡è†¨èƒ€ä¸€ä¸‹ï¼Œè†¨èƒ€çš„æ¬¡æ•°å¾ˆé‡è¦ï¼Œç›´æ¥å½±å“æœ€ç»ˆçš„å¯¹è±¡è®¡æ•°ï¼Œå°†ä¸¤æ¬¡è†¨èƒ€æ¬¡æ•°åˆå¹¶åœ¨ä¸Šé¢ä¹Ÿå¯ä»¥
 	imshow("dist-binary", dist_8u);
 
-	// Á¬Í¨ÇøÓò¼ÆÊı
+	// è¿é€šåŒºåŸŸè®¡æ•°
 	vector<vector<Point>> contours;
-	findContours(dist_8u, contours, CV_RETR_EXTERNAL, CHAIN_APPROX_SIMPLE); // RETR_EXTERNAL:±íÊ¾Ö»¼ì²â×îÍâ²ãÂÖÀª£¬¶ÔËùÓĞÂÖÀªÉèÖÃhierarchy[i][2]=hierarchy[i][3]=-1
+	findContours(dist_8u, contours, CV_RETR_EXTERNAL, CHAIN_APPROX_SIMPLE); // RETR_EXTERNAL:è¡¨ç¤ºåªæ£€æµ‹æœ€å¤–å±‚è½®å»“ï¼Œå¯¹æ‰€æœ‰è½®å»“è®¾ç½®hierarchy[i][2]=hierarchy[i][3]=-1
 	cout << "contours.size=" << contours.size() << endl; // contours.size=17
-
-	// draw result
+  
+  // draw result
 	Mat markers = Mat::zeros(src.size(), CV_8UC3);
 	RNG rng(12345);
 	for (size_t t = 0; t < contours.size(); t++)
@@ -412,6 +414,19 @@ int main(int argc, char** argv) {
 	}
 	printf("number of corns : %d", contours.size()); // number of corns : 17
 	imshow("Final result", markers);
+  
+  #pragma endregion
+
+	#pragma region ObjectsCount å¯¹è±¡è®¡æ•°
+
+	//sfseed.jpgä¸ºå°‘é‡ç“œå­ sfseeds.jpgæ•°é‡è¾ƒå¤š
+	//
+	Mat src_output;
+	src.convertTo(src_output, -1,3,0);//3æ˜¯äº®åº¦
+	imshow("src_out2", src_output);//ç°åœ¨è¿™ä¸ªäº®åº¦è¿˜ä¸é”™
+
+
+	
 	
 
 	#pragma endregion
@@ -427,28 +442,28 @@ void HarrisTrack(int, void *)
 	
 	cornerHarris(graySrc, dst, 2, 3, 0.04);
 	normalize(dst, normDst, 0,255, NORM_MINMAX);	
-	//ÏÖÔÚdstÎªScaleAbsµÄ½á¹û
+	//ç°åœ¨dstä¸ºScaleAbsçš„ç»“æœ
 	convertScaleAbs(normDst, dst);
 
 	Mat resultImg = img_1.clone();
 	for (int row = 0; row  < resultImg.rows; row ++)
 	{
-		//»ñÈ¡µ½µ±Ç°Row
+		//è·å–åˆ°å½“å‰Row
 		uchar* currentRow = dst.ptr(row);
 		for (int col = 0; col < resultImg.cols; col++)
 		{
-			//Ë÷Òıµ½currentRow[0] ¸ÃÊı×éµÄµÚÒ»¸öÊı
+			//ç´¢å¼•åˆ°currentRow[0] è¯¥æ•°ç»„çš„ç¬¬ä¸€ä¸ªæ•°
 			int value = (int)* currentRow;
-			//´óÓÚãĞÖµµÄ²Å·Å³öÀ´
+			//å¤§äºé˜ˆå€¼çš„æ‰æ”¾å‡ºæ¥
 			if (value > harrisThresh)
 			{
-				//row col²»Òª¸ã·´ÁË
+				//row colä¸è¦æåäº†
 				circle(resultImg, Point(col, row), 2, Scalar(0, 255, 0));
 			}
 			currentRow++;
 		}
 	}
-	//Õ¹Ê¾resultImg´¦Àí½á¹û
+	//å±•ç¤ºresultImgå¤„ç†ç»“æœ
 	imshow("harris", resultImg);
 
 }
@@ -456,16 +471,16 @@ void HarrisTrack(int, void *)
 void ShiTomasiTrack(int, void *)
 {
 	if (maxCorner < 1) { maxCorner = 1; }
-	//×îĞ¡¿É½ÓÊÜÏòÁ¿Öµ  ²»ÖªµÀÊÇÉ¶
+	//æœ€å°å¯æ¥å—å‘é‡å€¼  ä¸çŸ¥é“æ˜¯å•¥
 	double qualityLv = 0.01;
-	//Á½¸ö½Çµã×îĞ¡¼ä¸ô ·ÀÖ¹Í¬Ò»½Çµã±»¶à´Î±ê¼Ç
+	//ä¸¤ä¸ªè§’ç‚¹æœ€å°é—´éš” é˜²æ­¢åŒä¸€è§’ç‚¹è¢«å¤šæ¬¡æ ‡è®°
 	double minValue = 10;
-	//±£´æCornersµÄÊı×é dstÓÃÓÚdraw
+	//ä¿å­˜Cornersçš„æ•°ç»„ dstç”¨äºdraw
 	vector<Point2f> corners;
 
-	//ĞèÒª×¢Òâ£¬ÕâÀï²¢Î´Ê¹ÓÃSrc£¬ÓÃµÄÊÇimg_1
+	//éœ€è¦æ³¨æ„ï¼Œè¿™é‡Œå¹¶æœªä½¿ç”¨Srcï¼Œç”¨çš„æ˜¯img_1
 	dst = img_1.clone();
-	goodFeaturesToTrack(graySrc, corners, maxCorner, qualityLv, minValue);//ºóÃæ±£³ÖÄ¬ÈÏ
+	goodFeaturesToTrack(graySrc, corners, maxCorner, qualityLv, minValue);//åé¢ä¿æŒé»˜è®¤
 
 	//Draw Corners
 	for (int i = 0;  i < corners.size(); i++)
@@ -478,34 +493,34 @@ void ShiTomasiTrack(int, void *)
 
 }
 
-//Why: Find ROI ÕÒ²»µ½ÂÖÀª£¬Èç¹ûÈ¥µôifÅĞ¶Ï ÓÖ»á³öÏÖºÜ¶à¶àÓàµÄ¿ò¿ò
-void fXindROI(int, void *)//Ñ°ÕÒ±ßÔµ
+//Why: Find ROI æ‰¾ä¸åˆ°è½®å»“ï¼Œå¦‚æœå»æ‰ifåˆ¤æ–­ åˆä¼šå‡ºç°å¾ˆå¤šå¤šä½™çš„æ¡†æ¡†
+void fXindROI(int, void *)//å¯»æ‰¾è¾¹ç¼˜
 {
 	
-	cout << "**************µ±Ç°ãĞÖµ£º" << skew_TH << "******************************\n" << endl;
+	cout << "**************å½“å‰é˜ˆå€¼ï¼š" << skew_TH << "******************************\n" << endl;
 	Mat src_img = imread("./processPics/magz.jpg");
 	Mat mBlur;
 	medianBlur(src_img, mBlur, 11);
-	//cvtColor(src_img, graySrc, COLOR_BGR2GRAY);      //½«Ô­Í¼×ª»¯Îª»Ò¶ÈÍ¼
+	//cvtColor(src_img, graySrc, COLOR_BGR2GRAY);      //å°†åŸå›¾è½¬åŒ–ä¸ºç°åº¦å›¾
 	Mat canny_output;
-	Canny(mBlur, canny_output, skew_TH, skew_TH * 2, 3, false);                // canny±ßÔµ¼ì²â
+	Canny(mBlur, canny_output, skew_TH, skew_TH * 2, 3, false);                // cannyè¾¹ç¼˜æ£€æµ‹
 	imshow("canny_output", canny_output);
 	vector<vector<Point>> contours;
 	vector<Vec4i> hierachy;
-	findContours(canny_output, contours, hierachy, RETR_TREE, CHAIN_APPROX_SIMPLE, Point(0, 0));    // µ÷ÓÃAPI£¬ÕÒµ½ÂÖÀª
+	findContours(canny_output, contours, hierachy, RETR_TREE, CHAIN_APPROX_SIMPLE, Point(0, 0));    // è°ƒç”¨APIï¼Œæ‰¾åˆ°è½®å»“
 	
-	// É¸Ñ¡contoursÖĞµÄÂÖÀª£¬ÎÒÃÇĞèÒª×î´óµÄÄÇ¸öÂÖÀª
-	float min_width = src_img.cols*0.5;          // ¾ØĞÎµÄ×îĞ¡¿í¶È	
-	float min_height = src_img.rows*0.5;         // ¾ØĞÎµÄ×îĞ¡¸ß¶È
-	RNG rng(12345);                            //¶¨ÒåÒ»¸öËæ»úÊı²úÉúÆ÷£¬ÓÃÀ´²úÉú²»Í¬ÑÕÉ«µÄ¾ØĞÎ¿ò
+	// ç­›é€‰contoursä¸­çš„è½®å»“ï¼Œæˆ‘ä»¬éœ€è¦æœ€å¤§çš„é‚£ä¸ªè½®å»“
+	float min_width = src_img.cols*0.5;          // çŸ©å½¢çš„æœ€å°å®½åº¦	
+	float min_height = src_img.rows*0.5;         // çŸ©å½¢çš„æœ€å°é«˜åº¦
+	RNG rng(12345);                            //å®šä¹‰ä¸€ä¸ªéšæœºæ•°äº§ç”Ÿå™¨ï¼Œç”¨æ¥äº§ç”Ÿä¸åŒé¢œè‰²çš„çŸ©å½¢æ¡†
 	Mat drawImage = Mat::zeros(src_img.size(), CV_8UC3);
 	Rect bbox;
 
 	double degree = 0;
 
-	for (auto t = 0; t < contours.size(); ++t)            // ±éÀúÃ¿Ò»¸öÂÖÀª   
+	for (auto t = 0; t < contours.size(); ++t)            // éå†æ¯ä¸€ä¸ªè½®å»“   
 	{
-		RotatedRect minRect = minAreaRect(contours[t]);        // ÕÒµ½Ã¿Ò»¸öÂÖÀªµÄ×îĞ¡Íâ°üĞı×ª¾ØĞÎ£¬RotatedRectÀïÃæ°üº¬ÁËÖĞĞÄ×ø±ê¡¢³ß´çÒÔ¼°Ğı×ª½Ç¶ÈµÈĞÅÏ¢   
+		RotatedRect minRect = minAreaRect(contours[t]);        // æ‰¾åˆ°æ¯ä¸€ä¸ªè½®å»“çš„æœ€å°å¤–åŒ…æ—‹è½¬çŸ©å½¢ï¼ŒRotatedRecté‡Œé¢åŒ…å«äº†ä¸­å¿ƒåæ ‡ã€å°ºå¯¸ä»¥åŠæ—‹è½¬è§’åº¦ç­‰ä¿¡æ¯   
 		degree = abs(minRect.angle);
 	
 			cout << "Contours:" << contours.size() << "Degree:" << degree << endl;
@@ -515,37 +530,37 @@ void fXindROI(int, void *)//Ñ°ÕÒ±ßÔµ
 	}
 
 
-	for (auto t = 0; t < contours.size(); ++t)        // ±éÀúÃ¿Ò»¸öÂÖÀª
+	for (auto t = 0; t < contours.size(); ++t)        // éå†æ¯ä¸€ä¸ªè½®å»“
 	{
-		RotatedRect minRect = minAreaRect(contours[t]);        // ÕÒµ½Ã¿Ò»¸öÂÖÀªµÄ×îĞ¡Íâ°üĞı×ª¾ØĞÎ£¬RotatedRectÀïÃæ°üº¬ÁËÖĞĞÄ×ø±ê¡¢³ß´çÒÔ¼°Ğı×ª½Ç¶ÈµÈĞÅÏ¢
-		degree = abs(minRect.angle);                    // ×îĞ¡Íâ°üĞı×ª¾ØĞÎµÄĞı×ª½Ç¶È
-		if (minRect.size.width > min_width && minRect.size.height > min_height )//&& minRect.size.width < (src_img.cols - 5)   //É¸Ñ¡×îĞ¡Íâ°üĞı×ª¾ØĞÎ
+		RotatedRect minRect = minAreaRect(contours[t]);        // æ‰¾åˆ°æ¯ä¸€ä¸ªè½®å»“çš„æœ€å°å¤–åŒ…æ—‹è½¬çŸ©å½¢ï¼ŒRotatedRecté‡Œé¢åŒ…å«äº†ä¸­å¿ƒåæ ‡ã€å°ºå¯¸ä»¥åŠæ—‹è½¬è§’åº¦ç­‰ä¿¡æ¯
+		degree = abs(minRect.angle);                    // æœ€å°å¤–åŒ…æ—‹è½¬çŸ©å½¢çš„æ—‹è½¬è§’åº¦
+		if (minRect.size.width > min_width && minRect.size.height > min_height )//&& minRect.size.width < (src_img.cols - 5)   //ç­›é€‰æœ€å°å¤–åŒ…æ—‹è½¬çŸ©å½¢
 		//if(degree > 0)
 		//if (min_width == minRect.size.width && min_height == minRect.size.height)
 		{
 
 			printf("current angle : %f\n", degree);
-			Mat vertices;       // ¶¨ÒåÒ»¸ö4ĞĞ2ÁĞµÄµ¥Í¨µÀfloatÀàĞÍµÄMat£¬ÓÃÀ´´æ´¢Ğı×ª¾ØĞÎµÄËÄ¸ö¶¥µã
-			boxPoints(minRect, vertices);    // ¼ÆËãĞı×ª¾ØĞÎµÄËÄ¸ö¶¥µã×ø±ê
-			bbox = boundingRect(vertices);   //ÕÒµ½ÊäÈëµã¼¯µÄ×îĞ¡Íâ°üÖ±Á¢¾ØĞÎ£¬·µ»ØRectÀàĞÍ
-			cout << "×îĞ¡Íâ°ü¾ØĞÎ£º" << bbox << endl;
-			Scalar color = Scalar(rng.uniform(0, 255), rng.uniform(0, 255), rng.uniform(0, 255));   //²úÉúËæ»úÑÕÉ«
-			for (int i = 0; i < 4; i++)             // ±éÀúÃ¿¸öĞı×ª¾ØĞÎµÄËÄ¸ö¶¥µã×ø±ê
+			Mat vertices;       // å®šä¹‰ä¸€ä¸ª4è¡Œ2åˆ—çš„å•é€šé“floatç±»å‹çš„Matï¼Œç”¨æ¥å­˜å‚¨æ—‹è½¬çŸ©å½¢çš„å››ä¸ªé¡¶ç‚¹
+			boxPoints(minRect, vertices);    // è®¡ç®—æ—‹è½¬çŸ©å½¢çš„å››ä¸ªé¡¶ç‚¹åæ ‡
+			bbox = boundingRect(vertices);   //æ‰¾åˆ°è¾“å…¥ç‚¹é›†çš„æœ€å°å¤–åŒ…ç›´ç«‹çŸ©å½¢ï¼Œè¿”å›Rectç±»å‹
+			cout << "æœ€å°å¤–åŒ…çŸ©å½¢ï¼š" << bbox << endl;
+			Scalar color = Scalar(rng.uniform(0, 255), rng.uniform(0, 255), rng.uniform(0, 255));   //äº§ç”Ÿéšæœºé¢œè‰²
+			for (int i = 0; i < 4; i++)             // éå†æ¯ä¸ªæ—‹è½¬çŸ©å½¢çš„å››ä¸ªé¡¶ç‚¹åæ ‡
 			{
-				// ÔÚÏàÁÚµÄ¶¥µãÖ®¼ä»æÖÆÖ±Ïß
-				Mat p1 = vertices.row(i); // Ê¹ÓÃ³ÉÔ±º¯Êırow(i)ºÍcol(j)µÃµ½¾ØÕóµÄµÚiĞĞ»òÕßµÚjÁĞ£¬·µ»ØÖµÈÔÈ»ÊÇÒ»¸öµ¥Í¨µÀµÄMatÀàĞÍ
+				// åœ¨ç›¸é‚»çš„é¡¶ç‚¹ä¹‹é—´ç»˜åˆ¶ç›´çº¿
+				Mat p1 = vertices.row(i); // ä½¿ç”¨æˆå‘˜å‡½æ•°row(i)å’Œcol(j)å¾—åˆ°çŸ©é˜µçš„ç¬¬iè¡Œæˆ–è€…ç¬¬jåˆ—ï¼Œè¿”å›å€¼ä»ç„¶æ˜¯ä¸€ä¸ªå•é€šé“çš„Matç±»å‹
 				int j = (i + 1) % 4;
 				Mat p2 = vertices.row(j);
-				Point p1_point = Point(p1.at<float>(0, 0), p1.at<float>(0, 1)); //½«MatÀàĞÍµÄ¶¥µã×ø±ê×ª»»ÎªPointÀàĞÍ
+				Point p1_point = Point(p1.at<float>(0, 0), p1.at<float>(0, 1)); //å°†Matç±»å‹çš„é¡¶ç‚¹åæ ‡è½¬æ¢ä¸ºPointç±»å‹
 				Point p2_point = Point(p2.at<float>(0, 0), p2.at<float>(0, 1));
-				line(drawImage, p1_point, p2_point, color, 2, 8, 0);    // ¸ù¾İµÃµ½µÄËÄ¸ö¶¥µã£¬Í¨¹ıÁ¬½ÓËÄ¸ö¶¥µã£¬½«×îĞ¡Ğı×ª¾ØĞÎ»æÖÆ³öÀ´
+				line(drawImage, p1_point, p2_point, color, 2, 8, 0);    // æ ¹æ®å¾—åˆ°çš„å››ä¸ªé¡¶ç‚¹ï¼Œé€šè¿‡è¿æ¥å››ä¸ªé¡¶ç‚¹ï¼Œå°†æœ€å°æ—‹è½¬çŸ©å½¢ç»˜åˆ¶å‡ºæ¥
 			}
 		}
 	}
 	imshow("drawImg", drawImage);
 	if (bbox.width > 0 && bbox.height > 0)
 	{
-		Mat roiImg = src_img(bbox);        //´ÓÔ­Í¼ÖĞ½ØÈ¡ĞËÈ¤ÇøÓò
+		Mat roiImg = src_img(bbox);        //ä»åŸå›¾ä¸­æˆªå–å…´è¶£åŒºåŸŸ
 		namedWindow("resultPic", CV_WINDOW_AUTOSIZE);
 		imshow("resultPic", roiImg);
 	}
@@ -555,55 +570,55 @@ void fXindROI(int, void *)//Ñ°ÕÒ±ßÔµ
 
 }
 
-//½ÃÕıÎ»ÖÃ
+//çŸ«æ­£ä½ç½®
 void Check_Skew()
 {
 	Mat canny_output;
 	Mat mBlur;
 	
-	//Ö±½ÓCannyµÄĞ§¹û²»ºÃ
-	//ÏÈÄ£ºı¿´¿´
-	//È»ºó°Ñ½çÏŞ×îºÃ·ÅÇå³şÒ»µã Ê¹ÓÃÁËÖĞÖµÄ£ºı
+	//ç›´æ¥Cannyçš„æ•ˆæœä¸å¥½
+	//å…ˆæ¨¡ç³Šçœ‹çœ‹
+	//ç„¶åæŠŠç•Œé™æœ€å¥½æ”¾æ¸…æ¥šä¸€ç‚¹ ä½¿ç”¨äº†ä¸­å€¼æ¨¡ç³Š
 	
 	medianBlur(src, mBlur,11);
 	
-	//cvtColor(src, graySrc, COLOR_BGR2GRAY);         //½«Ô­Í¼×ª»¯Îª»Ò¶ÈÍ¼
+	//cvtColor(src, graySrc, COLOR_BGR2GRAY);         //å°†åŸå›¾è½¬åŒ–ä¸ºç°åº¦å›¾
 	imshow("mb", mBlur);
 	
-	//Why: ²»ÖªµÀÎªÉ¶ ²»ÄÜÊ¹ÓÃ»Ò¶ÈÍ¼
-	Canny(mBlur, canny_output, skew_TH, skew_TH * 2, 3, false);      // canny±ßÔµ¼ì²â
+	//Why: ä¸çŸ¥é“ä¸ºå•¥ ä¸èƒ½ä½¿ç”¨ç°åº¦å›¾
+	Canny(mBlur, canny_output, skew_TH, skew_TH * 2, 3, false);      // cannyè¾¹ç¼˜æ£€æµ‹
 	imshow("ca", canny_output);
 
 
 
 	vector<vector<Point>> contours;
 	vector<Vec4i> hireachy;
-	findContours(canny_output, contours, hireachy, RETR_TREE, CHAIN_APPROX_SIMPLE, Point(0, 0));    // ÕÒµ½ËùÓĞÂÖÀª
+	findContours(canny_output, contours, hireachy, RETR_TREE, CHAIN_APPROX_SIMPLE, Point(0, 0));    // æ‰¾åˆ°æ‰€æœ‰è½®å»“
 	Mat drawImg = Mat::zeros(src.size(), CV_8UC3);
-	float max_width = 0;       // ¶¨Òå×î´ó¿í¶È
-	float max_height = 0;      // ¶¨Òå×î´ó¸ß¶È
-	double degree = 0;         // ¶¨ÒåĞı×ª½Ç¶È
-	//Õâ¸öforÊÇÎªÁËÕÒ×î´óµÄ¿ò
-	for (auto t = 0; t < contours.size(); ++t)            // ±éÀúÃ¿Ò»¸öÂÖÀª   
+	float max_width = 0;       // å®šä¹‰æœ€å¤§å®½åº¦
+	float max_height = 0;      // å®šä¹‰æœ€å¤§é«˜åº¦
+	double degree = 0;         // å®šä¹‰æ—‹è½¬è§’åº¦
+	//è¿™ä¸ªforæ˜¯ä¸ºäº†æ‰¾æœ€å¤§çš„æ¡†
+	for (auto t = 0; t < contours.size(); ++t)            // éå†æ¯ä¸€ä¸ªè½®å»“   
 	{
-		RotatedRect minRect = minAreaRect(contours[t]);        // ÕÒµ½Ã¿Ò»¸öÂÖÀªµÄ×îĞ¡Íâ°üĞı×ª¾ØĞÎ£¬RotatedRectÀïÃæ°üº¬ÁËÖĞĞÄ×ø±ê¡¢³ß´çÒÔ¼°Ğı×ª½Ç¶ÈµÈĞÅÏ¢   
+		RotatedRect minRect = minAreaRect(contours[t]);        // æ‰¾åˆ°æ¯ä¸€ä¸ªè½®å»“çš„æœ€å°å¤–åŒ…æ—‹è½¬çŸ©å½¢ï¼ŒRotatedRecté‡Œé¢åŒ…å«äº†ä¸­å¿ƒåæ ‡ã€å°ºå¯¸ä»¥åŠæ—‹è½¬è§’åº¦ç­‰ä¿¡æ¯   
 		degree = abs(minRect.angle);
 		max_width = max(max_width, minRect.size.width);
 		max_height = max(max_height, minRect.size.height);
 	}
 	RNG rng(12345);
-	//ÕâÊÇÎªÁË»­³ö×î´óµÄ¿ò
+	//è¿™æ˜¯ä¸ºäº†ç”»å‡ºæœ€å¤§çš„æ¡†
 	for (auto t = 0; t < contours.size(); ++t)
 	{
 		RotatedRect minRect = minAreaRect(contours[t]);
 		if (max_width == minRect.size.width || max_height == minRect.size.height)
 		{
-			degree = minRect.angle;   // ±£´æÄ¿±êÂÖÀªµÄ½Ç¶È
+			degree = minRect.angle;   // ä¿å­˜ç›®æ ‡è½®å»“çš„è§’åº¦
 		
 		
 			Point2f pts[4];
 			minRect.points(pts);
-			Scalar color = Scalar(rng.uniform(0, 255), rng.uniform(0, 255), rng.uniform(0, 255));  //²úÉúËæ»úÑÕÉ«
+			Scalar color = Scalar(rng.uniform(0, 255), rng.uniform(0, 255), rng.uniform(0, 255));  //äº§ç”Ÿéšæœºé¢œè‰²
 			for (int i = 0; i < 4; ++i)
 			{
 				line(drawImg, pts[i], pts[(i + 1) % 4], color, 2, 8, 0);
@@ -613,12 +628,12 @@ void Check_Skew()
 		
 	}
 
-	imshow("ÕÒµ½µÄ¾ØĞÎÂÖÀª", drawImg);
+	imshow("æ‰¾åˆ°çš„çŸ©å½¢è½®å»“", drawImg);
 	Point2f center(src.cols / 2, src.rows / 2);
-	Mat rotm = getRotationMatrix2D(center, degree, 1.0);    //»ñÈ¡·ÂÉä±ä»»¾ØÕó
+	Mat rotm = getRotationMatrix2D(center, degree, 1.0);    //è·å–ä»¿å°„å˜æ¢çŸ©é˜µ
 	Mat dst;
-	warpAffine(src, dst, rotm, src.size(), INTER_LINEAR, BORDER_REPLICATE, Scalar(255, 255, 255));    // ½øĞĞÍ¼ÏñĞı×ª²Ù×÷
-	imwrite("./processPics/123.png", dst);      //½«Ğ£ÕıºóµÄÍ¼Ïñ±£´æÏÂÀ´
+	warpAffine(src, dst, rotm, src.size(), INTER_LINEAR, BORDER_REPLICATE, Scalar(255, 255, 255));    // è¿›è¡Œå›¾åƒæ—‹è½¬æ“ä½œ
+	imwrite("./processPics/123.png", dst);      //å°†æ ¡æ­£åçš„å›¾åƒä¿å­˜ä¸‹æ¥
 	imshow("correct image", dst);
 
 	
@@ -628,54 +643,54 @@ void Check_Skew()
 void findROI(int, void*)
 {
 	
-	printf("**************µ±Ç°ãĞÖµ£º%d******************************\n", threshold_value);
-	//cvtColor(src_img, gray_img, COLOR_BGR2GRAY);      //½«Ô­Í¼×ª»¯Îª»Ò¶ÈÍ¼
+	printf("**************å½“å‰é˜ˆå€¼ï¼š%d******************************\n", threshold_value);
+	//cvtColor(src_img, gray_img, COLOR_BGR2GRAY);      //å°†åŸå›¾è½¬åŒ–ä¸ºç°åº¦å›¾
 	Mat canny_output;
 	Mat mBlur;
 	medianBlur(src, mBlur, 11);
-	Canny(mBlur, canny_output, threshold_value, threshold_value * 2, 3, false);                // canny±ßÔµ¼ì²â
+	Canny(mBlur, canny_output, threshold_value, threshold_value * 2, 3, false);                // cannyè¾¹ç¼˜æ£€æµ‹
 	imshow("canny_output", canny_output);
 	vector<vector<Point>> contours;
 	vector<Vec4i> hireachy;
-	findContours(canny_output, contours, hireachy, RETR_TREE, CHAIN_APPROX_SIMPLE, Point(0, 0));    // µ÷ÓÃAPI£¬ÕÒµ½ÂÖÀª
+	findContours(canny_output, contours, hireachy, RETR_TREE, CHAIN_APPROX_SIMPLE, Point(0, 0));    // è°ƒç”¨APIï¼Œæ‰¾åˆ°è½®å»“
 
-	// É¸Ñ¡contoursÖĞµÄÂÖÀª£¬ÎÒÃÇĞèÒª×î´óµÄÄÇ¸öÂÖÀª
-	float max_width = 0;       // ¶¨Òå×î´ó¿í¶È
-	float max_height = 0;      // ¶¨Òå×î´ó¸ß¶È
-	double degree = 0;         // ¶¨ÒåĞı×ª½Ç¶È
-	//Õâ¸öforÊÇÎªÁËÕÒ×î´óµÄ¿ò
-	for (auto t = 0; t < contours.size(); ++t)            // ±éÀúÃ¿Ò»¸öÂÖÀª   
+	// ç­›é€‰contoursä¸­çš„è½®å»“ï¼Œæˆ‘ä»¬éœ€è¦æœ€å¤§çš„é‚£ä¸ªè½®å»“
+	float max_width = 0;       // å®šä¹‰æœ€å¤§å®½åº¦
+	float max_height = 0;      // å®šä¹‰æœ€å¤§é«˜åº¦
+	double degree = 0;         // å®šä¹‰æ—‹è½¬è§’åº¦
+	//è¿™ä¸ªforæ˜¯ä¸ºäº†æ‰¾æœ€å¤§çš„æ¡†
+	for (auto t = 0; t < contours.size(); ++t)            // éå†æ¯ä¸€ä¸ªè½®å»“   
 	{
-		RotatedRect minRect = minAreaRect(contours[t]);        // ÕÒµ½Ã¿Ò»¸öÂÖÀªµÄ×îĞ¡Íâ°üĞı×ª¾ØĞÎ£¬RotatedRectÀïÃæ°üº¬ÁËÖĞĞÄ×ø±ê¡¢³ß´çÒÔ¼°Ğı×ª½Ç¶ÈµÈĞÅÏ¢   
+		RotatedRect minRect = minAreaRect(contours[t]);        // æ‰¾åˆ°æ¯ä¸€ä¸ªè½®å»“çš„æœ€å°å¤–åŒ…æ—‹è½¬çŸ©å½¢ï¼ŒRotatedRecté‡Œé¢åŒ…å«äº†ä¸­å¿ƒåæ ‡ã€å°ºå¯¸ä»¥åŠæ—‹è½¬è§’åº¦ç­‰ä¿¡æ¯   
 		degree = abs(minRect.angle);
 		max_width = max(max_width, minRect.size.width);
 		max_height = max(max_height, minRect.size.height);
 	}
 
-	RNG rng(12345);                            //¶¨ÒåÒ»¸öËæ»úÊı²úÉúÆ÷£¬ÓÃÀ´²úÉú²»Í¬ÑÕÉ«µÄ¾ØĞÎ¿ò
+	RNG rng(12345);                            //å®šä¹‰ä¸€ä¸ªéšæœºæ•°äº§ç”Ÿå™¨ï¼Œç”¨æ¥äº§ç”Ÿä¸åŒé¢œè‰²çš„çŸ©å½¢æ¡†
 	Mat drawImage = Mat::zeros(src_img.size(), CV_8UC3);
 	Rect bbox;
-	for (auto t = 0; t < contours.size(); ++t)        // ±éÀúÃ¿Ò»¸öÂÖÀª
+	for (auto t = 0; t < contours.size(); ++t)        // éå†æ¯ä¸€ä¸ªè½®å»“
 	{
-		RotatedRect minRect = minAreaRect(contours[t]);        // ÕÒµ½Ã¿Ò»¸öÂÖÀªµÄ×îĞ¡Íâ°üĞı×ª¾ØĞÎ£¬RotatedRectÀïÃæ°üº¬ÁËÖĞĞÄ×ø±ê¡¢³ß´çÒÔ¼°Ğı×ª½Ç¶ÈµÈĞÅÏ¢
+		RotatedRect minRect = minAreaRect(contours[t]);        // æ‰¾åˆ°æ¯ä¸€ä¸ªè½®å»“çš„æœ€å°å¤–åŒ…æ—‹è½¬çŸ©å½¢ï¼ŒRotatedRecté‡Œé¢åŒ…å«äº†ä¸­å¿ƒåæ ‡ã€å°ºå¯¸ä»¥åŠæ—‹è½¬è§’åº¦ç­‰ä¿¡æ¯
 		
-		if ((minRect.size.width == max_width || minRect.size.height == max_height) && minRect.size.width > 620)   //É¸Ñ¡×îĞ¡Íâ°üĞı×ª¾ØĞÎ
+		if ((minRect.size.width == max_width || minRect.size.height == max_height) && minRect.size.width > 620)   //ç­›é€‰æœ€å°å¤–åŒ…æ—‹è½¬çŸ©å½¢
 		{
 			printf("current angle : %f\n", degree);
-			Mat vertices;       // ¶¨ÒåÒ»¸ö4ĞĞ2ÁĞµÄµ¥Í¨µÀfloatÀàĞÍµÄMat£¬ÓÃÀ´´æ´¢Ğı×ª¾ØĞÎµÄËÄ¸ö¶¥µã
-			boxPoints(minRect, vertices);    // ¼ÆËãĞı×ª¾ØĞÎµÄËÄ¸ö¶¥µã×ø±ê
-			bbox = boundingRect(vertices);   //ÕÒµ½ÊäÈëµã¼¯µÄ×îĞ¡Íâ°üÖ±Á¢¾ØĞÎ£¬·µ»ØRectÀàĞÍ
-			cout << "×îĞ¡Íâ°ü¾ØĞÎ£º" << bbox << endl;
-			Scalar color = Scalar(rng.uniform(0, 255), rng.uniform(0, 255), rng.uniform(0, 255));   //²úÉúËæ»úÑÕÉ«
-			for (int i = 0; i < 4; i++)             // ±éÀúÃ¿¸öĞı×ª¾ØĞÎµÄËÄ¸ö¶¥µã×ø±ê
+			Mat vertices;       // å®šä¹‰ä¸€ä¸ª4è¡Œ2åˆ—çš„å•é€šé“floatç±»å‹çš„Matï¼Œç”¨æ¥å­˜å‚¨æ—‹è½¬çŸ©å½¢çš„å››ä¸ªé¡¶ç‚¹
+			boxPoints(minRect, vertices);    // è®¡ç®—æ—‹è½¬çŸ©å½¢çš„å››ä¸ªé¡¶ç‚¹åæ ‡
+			bbox = boundingRect(vertices);   //æ‰¾åˆ°è¾“å…¥ç‚¹é›†çš„æœ€å°å¤–åŒ…ç›´ç«‹çŸ©å½¢ï¼Œè¿”å›Rectç±»å‹
+			cout << "æœ€å°å¤–åŒ…çŸ©å½¢ï¼š" << bbox << endl;
+			Scalar color = Scalar(rng.uniform(0, 255), rng.uniform(0, 255), rng.uniform(0, 255));   //äº§ç”Ÿéšæœºé¢œè‰²
+			for (int i = 0; i < 4; i++)             // éå†æ¯ä¸ªæ—‹è½¬çŸ©å½¢çš„å››ä¸ªé¡¶ç‚¹åæ ‡
 			{
-				// ÔÚÏàÁÚµÄ¶¥µãÖ®¼ä»æÖÆÖ±Ïß
-				Mat p1 = vertices.row(i); // Ê¹ÓÃ³ÉÔ±º¯Êırow(i)ºÍcol(j)µÃµ½¾ØÕóµÄµÚiĞĞ»òÕßµÚjÁĞ£¬·µ»ØÖµÈÔÈ»ÊÇÒ»¸öµ¥Í¨µÀµÄMatÀàĞÍ
+				// åœ¨ç›¸é‚»çš„é¡¶ç‚¹ä¹‹é—´ç»˜åˆ¶ç›´çº¿
+				Mat p1 = vertices.row(i); // ä½¿ç”¨æˆå‘˜å‡½æ•°row(i)å’Œcol(j)å¾—åˆ°çŸ©é˜µçš„ç¬¬iè¡Œæˆ–è€…ç¬¬jåˆ—ï¼Œè¿”å›å€¼ä»ç„¶æ˜¯ä¸€ä¸ªå•é€šé“çš„Matç±»å‹
 				int j = (i + 1) % 4;
 				Mat p2 = vertices.row(j);
-				Point p1_point = Point(p1.at<float>(0, 0), p1.at<float>(0, 1)); //½«MatÀàĞÍµÄ¶¥µã×ø±ê×ª»»ÎªPointÀàĞÍ
+				Point p1_point = Point(p1.at<float>(0, 0), p1.at<float>(0, 1)); //å°†Matç±»å‹çš„é¡¶ç‚¹åæ ‡è½¬æ¢ä¸ºPointç±»å‹
 				Point p2_point = Point(p2.at<float>(0, 0), p2.at<float>(0, 1));
-				line(src, p1_point, p2_point, color, 2, 8, 0);    // ¸ù¾İµÃµ½µÄËÄ¸ö¶¥µã£¬Í¨¹ıÁ¬½ÓËÄ¸ö¶¥µã£¬½«×îĞ¡Ğı×ª¾ØĞÎ»æÖÆ³öÀ´
+				line(src, p1_point, p2_point, color, 2, 8, 0);    // æ ¹æ®å¾—åˆ°çš„å››ä¸ªé¡¶ç‚¹ï¼Œé€šè¿‡è¿æ¥å››ä¸ªé¡¶ç‚¹ï¼Œå°†æœ€å°æ—‹è½¬çŸ©å½¢ç»˜åˆ¶å‡ºæ¥
 			}
 		}
 	}
@@ -683,7 +698,7 @@ void findROI(int, void*)
 
 	if (bbox.width > 0 && bbox.height > 0)
 	{
-		Mat roiImg = src_img(bbox);        //´ÓÔ­Í¼ÖĞ½ØÈ¡ĞËÈ¤ÇøÓò
+		Mat roiImg = src_img(bbox);        //ä»åŸå›¾ä¸­æˆªå–å…´è¶£åŒºåŸŸ
 		namedWindow(roi_win, CV_WINDOW_AUTOSIZE);
 		imshow(roi_win, roiImg);
 	}
