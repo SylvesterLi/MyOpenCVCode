@@ -357,8 +357,6 @@ int main(int argc, char** argv) {
 
 	#pragma endregion
 
-
-	
 	#pragma region 对象提取
 	//
 	////二值分割 形态学处理 距离变换 连通区域计算
@@ -454,6 +452,9 @@ int main(int argc, char** argv) {
 	#pragma endregion
 
 	
+
+
+
 	waitKey(0);
 	return 0;
 }
