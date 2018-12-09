@@ -35,7 +35,7 @@ void Check_Skew();
 
 int main(int argc, char** argv) {
 	//这里需要注意：在Surface上是SANG-Surface
-	src = imread("./processPics/sfseed.jpg");
+	src = imread("./processPics/pic1.png");
 	//img_1 = imread("./processPics/magz.jpg");
 	//img_1 = imread("ppp.png");
 	if (src.empty()) {
@@ -75,7 +75,7 @@ int main(int argc, char** argv) {
 
 	#pragma endregion
 
-	#pragma region CustomCornerDetectiom
+	#pragma region CustomCornerDetection
 
 	//参考文章：
 	//https://blog.csdn.net/weixin_41695564/article/details/79979784  
@@ -418,31 +418,37 @@ int main(int argc, char** argv) {
 
 	#pragma region ObjectsCount 对象计数
 
-	//sfseed.jpg为少量瓜子 sfseeds.jpg数量较多
+	////sfseed.jpg为少量瓜子 sfseeds.jpg数量较多
+	//Mat src_output;
+	//src.convertTo(src_output, -1,3,0);//3是亮度
+	//imshow("src_out2", src_output);//现在这个亮度还不错
+	//Mat kernel = getStructuringElement(MORPH_RECT, Size(5, 5));
+	//dilate(src_output, src_output, kernel,Point(-1,-1),3);
+	//imshow("src_out2 dilate", src_output);//现在这个亮度还不错
+	////
+	//Mat binary;
+	//cvtColor(src_output, graySrc, COLOR_BGR2GRAY);
+	//threshold(graySrc, binary, 0, 255, THRESH_BINARY_INV|THRESH_TRIANGLE);
+	//imshow("binary image", binary);
 	//
-	Mat src_output;
-	src.convertTo(src_output, -1,3,0);//3是亮度
-	imshow("src_out2", src_output);//现在这个亮度还不错
 
-	Mat binary;
-	cvtColor(src_output, graySrc, COLOR_BGR2GRAY);
-	threshold(graySrc, binary, 0, 255, THRESH_BINARY | THRESH_TRIANGLE);
-	imshow("binary image", binary);
-	
-	 
-	vector<vector<Point>> contours;
-	findContours(binary, contours, CV_RETR_TREE, CHAIN_APPROX_SIMPLE); // RETR_EXTERNAL:表示只检测最外层轮廓，对所有轮廓设置hierarchy[i][2]=hierarchy[i][3]=-1
-	cout << "contours.size=" << contours.size() << endl; // contours.size=17
+	//
+	//vector<vector<Point>> contours;
+	//findContours(binary, contours, CV_RETR_EXTERNAL, CHAIN_APPROX_SIMPLE); // RETR_EXTERNAL:表示只检测最外层轮廓，对所有轮廓设置hierarchy[i][2]=hierarchy[i][3]=-1
+	//cout << "contours.size=" << contours.size() << endl; // contours.size=17
 
-	//draw result
-	Mat markers = Mat::zeros(src.size(), CV_8UC3);
-	RNG rng(12345);
-	for (size_t t = 0; t < contours.size(); t++)
-	{
-		drawContours(markers, contours, static_cast<int>(t), Scalar(rng.uniform(0, 255), rng.uniform(0, 255), rng.uniform(0, 255)), -1, 8, Mat());
-	}
-	printf("number of corns : %d", contours.size()); // number of corns : 17
-	imshow("Final result", markers);
+	////draw result
+	//Mat markers = Mat::zeros(src.size(), CV_8UC3);
+	//RNG rng(12345);
+	//for (size_t t = 0; t < contours.size(); t++)
+	//{
+	//	drawContours(markers, contours, static_cast<int>(t), Scalar(rng.uniform(0, 255), rng.uniform(0, 255), rng.uniform(0, 255)), -1, 8, Mat());
+	//}
+	//printf("number of corns : %d", contours.size()); // number of corns : 17
+	//imshow("Final result", markers);
+	//
+
+	////行，反正就这样吧，计算不准
 
 
 	#pragma endregion
