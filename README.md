@@ -295,7 +295,14 @@ the result shows:
 
 The full experience is recorded at here : https://segmentfault.com/a/1190000017257827
 	
-	
+## Real-Time Video Capture
+
+First of all, we should access camera to record one or more persons faces.And in the code,
+While(cap.read(frame)) is used to save capture image,but if not give your programe a pause or delay ,there may be some problems occour.
+
+here is what I have done:
+
+![](picSource/videoCapture.png)
 	
 ---
 

@@ -288,6 +288,7 @@ int main(int argc, char** argv) {
 	/*
 
 	//在Surface上需要更改位置（用的是自带的face训练集）
+	
 	String caPath = "F:/OCV/opencv/newbuild/install/etc/haarcascades/haarcascade_frontalface_alt.xml";
 	CascadeClassifier face_cascade;
 	if (!face_cascade.load(caPath))
@@ -451,8 +452,84 @@ int main(int argc, char** argv) {
 
 	#pragma endregion
 
-	
+	#pragma region Real-Time Face Detection 实时人脸检测
 
+
+
+	//VideoCapture capture(1);
+	//Mat frame;
+	//namedWindow("cap", WINDOW_AUTOSIZE);
+
+	//while (capture.read(frame))
+	//{
+	//	//在这里操作
+
+
+	//	//在Surface上需要更改位置（用的是自带的face训练集）
+	//	//C:/Users/SANG-Surface/PersonalStorage/OCV/opencv/
+	//	String caPath = "C:/Users/SANG-Surface/PersonalStorage/OCV/opencv/newbuild/install/etc/haarcascades/haarcascade_frontalface_alt.xml";
+	//	CascadeClassifier face_cascade;
+	//	if (!face_cascade.load(caPath))
+	//	{
+	//		printf("face cascade could not load");
+	//		waitKey(0);
+	//		return -1;
+
+	//	}
+
+	//	cvtColor(frame, graySrc, COLOR_BGR2GRAY);
+	//	equalizeHist(graySrc, graySrc);
+
+	//	vector<Rect> faces;
+	//	face_cascade.detectMultiScale(graySrc, faces, 1.1, 2, 0, Size(30, 30));
+	//	for (size_t i = 0; i < faces.size(); i++)
+	//	{
+	//		rectangle(frame, faces[i], Scalar(0, 0, 255));
+	//	}
+
+
+	//	imshow("cap",frame);
+	//	if (waitKey(30) == 27)  // 间隔30毫秒获取一帧数据，esc推出
+	//	{
+	//		break;
+	//	}
+	//}
+
+
+#pragma endregion
+
+	#pragma region EyeTrack 眼睛追踪
+	
+	//Windows摄像头确实是反着的
+
+	//C:\Users\SANG-Surface\PersonalStorage\OCV\opencv\newbuild\install\etc\haarcascades
+	//haarcascade_eye_tree_eyeglasses.xml
+	//haarcascade_lefteye_2splits.xml
+	//haarcascade_righteye_2splits.xml
+
+	String caPath = "C:/Users/SANG-Surface/PersonalStorage/OCV/opencv/newbuild/install/etc/haarcascades/haarcascade_eye_tree_eyeglasses.xml";
+	//不想写了。。。
+	
+	
+	CascadeClassifier face_cascade;
+	CascadeClassifier lefteye_cascade;
+	CascadeClassifier rightface_cascade;
+
+
+
+
+
+	if (!face_cascade.load(caPath))
+	{
+		printf("left eye cascade could not load");
+		waitKey(0);
+		return -1;
+
+	}
+	if(!lefteye_cascade.load())
+
+
+	#pragma endregion
 
 
 	waitKey(0);
