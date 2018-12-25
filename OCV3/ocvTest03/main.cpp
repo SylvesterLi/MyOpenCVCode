@@ -35,7 +35,7 @@ void Check_Skew();
 
 int main(int argc, char** argv) {
 	//这里需要注意：在Surface上是SANG-Surface
-	src = imread("./processPics/pic1.png");
+	src = imread("./processPics/green.png");
 	//img_1 = imread("./processPics/magz.jpg");
 	//img_1 = imread("ppp.png");
 	if (src.empty()) {
@@ -500,36 +500,181 @@ int main(int argc, char** argv) {
 
 	#pragma region EyeTrack 眼睛追踪
 	
-	//Windows摄像头确实是反着的
+	////Windows摄像头确实是反着的
 
-	//C:\Users\SANG-Surface\PersonalStorage\OCV\opencv\newbuild\install\etc\haarcascades
-	//haarcascade_eye_tree_eyeglasses.xml
-	//haarcascade_lefteye_2splits.xml
-	//haarcascade_righteye_2splits.xml
+	////C:\Users\SANG-Surface\PersonalStorage\OCV\opencv\newbuild\install\etc\haarcascades
+	////haarcascade_eye_tree_eyeglasses.xml
+	////haarcascade_lefteye_2splits.xml
+	////haarcascade_righteye_2splits.xml
 
-	String caPath = "C:/Users/SANG-Surface/PersonalStorage/OCV/opencv/newbuild/install/etc/haarcascades/haarcascade_eye_tree_eyeglasses.xml";
-	//不想写了。。。
-	
-	
-	CascadeClassifier face_cascade;
-	CascadeClassifier lefteye_cascade;
-	CascadeClassifier rightface_cascade;
-
-
+	//String caPath = "C:/Users/SANG-Surface/PersonalStorage/OCV/opencv/newbuild/install/etc/haarcascades/haarcascade_eye_tree_eyeglasses.xml";
+	////不想写了。。。
+	//
+	//
+	//CascadeClassifier face_cascade;
+	//CascadeClassifier lefteye_cascade;
+	//CascadeClassifier rightface_cascade;
 
 
 
-	if (!face_cascade.load(caPath))
-	{
-		printf("left eye cascade could not load");
-		waitKey(0);
-		return -1;
 
-	}
-	if(!lefteye_cascade.load())
+
+	//if (!face_cascade.load(caPath))
+	//{
+	//	printf("left eye cascade could not load");
+	//	waitKey(0);
+	//	return -1;
+
+	//}
+	//if(!lefteye_cascade.load())
 
 
 	#pragma endregion
+
+	#pragma region K-Means
+
+
+
+	////https://blog.csdn.net/huanghuangjin/article/details/81434637
+	////代码教程在这抄的
+	//Scalar colorTab[] = {
+	//		   Scalar(0, 0, 255), // 红
+	//		   Scalar(0, 255, 0), // 绿
+	//		   Scalar(255, 0, 0), // 蓝
+	//		   Scalar(0, 255, 255), // 黄
+	//		   Scalar(255, 0, 255) // 品红
+	//};
+	//int width = src.cols;
+	//int height = src.rows;
+	//int dims = src.channels();
+
+	//// 初始化定义
+	//int sampleCount = width * height;
+	//int clusterCount = 4; // 分类数
+	//Mat points(sampleCount,dims , CV_32F, Scalar(10)); // 行数为src的像素点数，列数为src的通道数，每列数据分别为src的b g r，src从上到下从左到右顺序读取数据
+	//Mat labels;
+	//Mat centers(clusterCount,1, points.type()); // 这里不初始化结果也是一样的
+
+	//// RGB 数据转换到样本数据
+	//int index = 0;
+	//for (int row = 0; row < height; row++) {
+	//	for (int col = 0; col < width; col++) {
+	//		index = row * width + col; // points每列数据分别为src的b g r，src从上到下从左到右顺序读取数据
+	//		Vec3b bgr = src.at<Vec3b>(row, col);
+	//		points.at<float>(index, 0) = static_cast<int>(bgr[0]);
+	//		points.at<float>(index, 1) = static_cast<int>(bgr[1]);
+	//		points.at<float>(index, 2) = static_cast<int>(bgr[2]);
+	//	}
+	//}
+
+	//// 运行K-Means
+	//TermCriteria criteria = TermCriteria(TermCriteria::EPS + TermCriteria::COUNT, 10, 0.1);
+	//kmeans(points, clusterCount, labels, criteria, 3, KMEANS_PP_CENTERS, centers);
+	//cout << "points.size=" << points.size() << ", labels.size=" << labels.size() << endl; // points.size=[3 x 127434], labels.size=[1 x 127434]   cols x rows
+
+	//// 显示图像分割结果
+	//Mat result = Mat::zeros(src.size(), src.type());
+	//for (int row = 0; row < height; row++) {
+	//	for (int col = 0; col < width; col++) {
+	//		index = row * width + col;
+	//		int label = labels.at<int>(index, 0); // labels只有1列，只能用0
+	//		result.at<Vec3b>(row, col)[0] = colorTab[label][0]; // 分类编号对应的颜色值的 b g r，分别赋值给result的b g r
+	//		result.at<Vec3b>(row, col)[1] = colorTab[label][1];
+	//		result.at<Vec3b>(row, col)[2] = colorTab[label][2];
+	//	}
+	//}
+	//for (int i = 0; i < centers.rows; i++) {
+	//	int x = centers.at<float>(i, 0);
+	//	int y = centers.at<float>(i, 1);
+	//	printf("center %d = c.x : %d, c.y : %d\n", i, x, y); // 不是基于src中像素位置的距离计算出来的，而是src中像素的颜色数据的中心值
+	//}
+	//imshow("KMeans Segmentation5-4", result);
+
+	#pragma endregion
+
+	#pragma region RealtimeBackgroundReplace
+
+	VideoCapture capture(1);
+	//capture.open("C:/Users/SANG-Surface/Desktop/KG_Trim.mp4");
+	if (!capture.isOpened())
+	{
+		printf("cannot find videoes!!( •̀ ω •́ )y!!!");
+	}
+	Mat frame;
+	namedWindow("cap", WINDOW_AUTOSIZE);
+
+	while (capture.read(frame))
+	{
+		src = frame;
+		//代码教程在这抄的
+		Scalar colorTab[] = {
+				   Scalar(0, 0, 255), // 红
+				   Scalar(0, 255, 0), // 绿
+				   Scalar(255, 0, 0), // 蓝
+				   Scalar(0, 255, 255), // 黄
+				   Scalar(255, 0, 255) // 品红
+		};
+		int width = src.cols;
+		int height = src.rows;
+		int dims = src.channels();
+
+		// 初始化定义
+		int sampleCount = width * height;
+		int clusterCount = 4; // 分类数
+		Mat points(sampleCount,dims , CV_32F, Scalar(10)); // 行数为src的像素点数，列数为src的通道数，每列数据分别为src的b g r，src从上到下从左到右顺序读取数据
+		Mat labels;
+		Mat centers(clusterCount,1, points.type()); // 这里不初始化结果也是一样的
+
+		// RGB 数据转换到样本数据
+		int index = 0;
+		for (int row = 0; row < height; row++) {
+			for (int col = 0; col < width; col++) {
+				index = row * width + col; // points每列数据分别为src的b g r，src从上到下从左到右顺序读取数据
+				Vec3b bgr = src.at<Vec3b>(row, col);
+				points.at<float>(index, 0) = static_cast<int>(bgr[0]);
+				points.at<float>(index, 1) = static_cast<int>(bgr[1]);
+				points.at<float>(index, 2) = static_cast<int>(bgr[2]);
+			}
+		}
+
+		// 运行K-Means
+		TermCriteria criteria = TermCriteria(TermCriteria::EPS + TermCriteria::COUNT, 10, 0.1);
+		kmeans(points, clusterCount, labels, criteria, 3, KMEANS_PP_CENTERS, centers);
+		cout << "points.size=" << points.size() << ", labels.size=" << labels.size() << endl; // points.size=[3 x 127434], labels.size=[1 x 127434]   cols x rows
+
+		// 显示图像分割结果
+		Mat result = Mat::zeros(src.size(), src.type());
+		for (int row = 0; row < height; row++) {
+			for (int col = 0; col < width; col++) {
+				index = row * width + col;
+				int label = labels.at<int>(index, 0); // labels只有1列，只能用0
+				result.at<Vec3b>(row, col)[0] = colorTab[label][0]; // 分类编号对应的颜色值的 b g r，分别赋值给result的b g r
+				result.at<Vec3b>(row, col)[1] = colorTab[label][1];
+				result.at<Vec3b>(row, col)[2] = colorTab[label][2];
+			}
+		}
+		for (int i = 0; i < centers.rows; i++) {
+			int x = centers.at<float>(i, 0);
+			int y = centers.at<float>(i, 1);
+			printf("center %d = c.x : %d, c.y : %d\n", i, x, y); // 不是基于src中像素位置的距离计算出来的，而是src中像素的颜色数据的中心值
+		}
+
+		//在这里操作
+		imshow("cap", result);
+
+		if (waitKey(30) == 27)  // 间隔30毫秒获取一帧数据，esc退出
+		{
+			break;
+		}
+
+
+	}
+
+
+
+	#pragma endregion
+
+
 
 
 	waitKey(0);
