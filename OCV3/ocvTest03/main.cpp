@@ -595,7 +595,7 @@ int main(int argc, char** argv) {
 	#pragma region RealtimeBackgroundReplace
 
 	VideoCapture capture(1);
-	//capture.open("C:/Users/SANG-Surface/Desktop/KG_Trim.mp4");
+	//capture.open("./processPics/KG_Trim.mp4");
 	if (!capture.isOpened())
 	{
 		printf("cannot find videoes!!( •̀ ω •́ )y!!!");
