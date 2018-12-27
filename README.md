@@ -302,9 +302,40 @@ While(cap.read(frame)) is used to save capture image,but if not give your progra
 
 here is what I have done:
 
-![](picSource/videoCapture.png)
+![](picsSource/videoCapture.png)
 	
+
+## K-Means Background Replace
+
+- for Static Pictures
+
+    This pic is an openning book on the desk.
+
+    ![](picsSource/bookKM.png)
+
+    and a Surface default BG
+
+    ![](picsSource/suraKM.png)
+
+    the function of K-Means I still have not understand...
+
+- for Real-time video capture
+
+    ![](picsSource/km-GIF.gif)
+
+    it is the time I am in Lib
+
+
 ---
+
+
+
+
+
+
+
+
+
 
 recently I am thinking of how to choose between ASP.Net and OpenCV. My company needs me to learn ASP.Net to build some websites, which is aimed to optimize workflow.
 
